@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mediapipe/drawing_utils": "^0.3.1620248257",
+    "axios": "^1.2.1",
     "pinia": "^2.0.26",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"

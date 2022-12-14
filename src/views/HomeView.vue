@@ -1,85 +1,8 @@
 <script setup>
-import * as mp from '@mediapipe/face_mesh';
-import * as drawing from '@mediapipe/drawing_utils';
-import fp from '@mediapipe/face_detection';
+import { reactive } from 'vue';
 
-import { onMounted, reactive } from 'vue';
+const state = reactive({ imgurl: 'https://res.cloudinary.com/voltus/image/upload/v1668342671/voltus/xzmksyvrbmbtyldnc00l.png' })
 
-const state = reactive({
-	imgurl: 'https://res.cloudinary.com/voltus/image/upload/v1668342671/voltus/xzmksyvrbmbtyldnc00l.png',
-});
-
-const faceMesh = new mp.FaceMesh({
-	locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@${VERSION}/${file}`,
-});
-
-const image = new Image();
-
-const loadFaceMesh = async () => {
-	image.crossOrigin = 'anonymous';
-	image.src = state.imgurl;
-	await image.decode();
-	faceMesh.setOptions({ staticImageMode: true, enableFaceGeometry: true, maxNumFaces: 2 });
-	faceMesh.onResults((results) => drawFaceMesh(results));
-	await faceMesh.send({ image });
-};
-
-let drawFaceMesh = (results) => {
-	const canvasElement = document.getElementById('canva');
-	const canvasCtx = canvasElement.getContext('2d');
-	canvasElement.width = image.width;
-	canvasElement.height = image.height;
-
-	canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-	canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-
-	if (results.multiFaceLandmarks) {
-		for (const landmarks of results.multiFaceLandmarks) {
-			drawing.drawConnectors(canvasCtx, landmarks, mp.FACEMESH_TESSELATION, {
-				color: '#C0C0C070',
-				lineWidth: 1,
-			});
-			drawing.drawConnectors(canvasCtx, landmarks, mp.FACEMESH_RIGHT_EYE, {
-				color: '#E0E0E0',
-				lineWidth: 1,
-			});
-			drawing.drawConnectors(canvasCtx, landmarks, mp.FACEMESH_LEFT_EYE, {
-				color: '#E0E0E0',
-				lineWidth: 1,
-			});
-			drawing.drawConnectors(canvasCtx, landmarks, mp.FACEMESH_FACE_OVAL, { color: '#E0E0E0', lineWidth: 0.5 });
-			drawing.drawConnectors(canvasCtx, landmarks, mp.FACEMESH_LIPS, { color: '#E0E0E0', lineWidth: 1 });
-		}
-	}
-};
-
-let loadFaceDetect = async () => {
-	image.crossOrigin = 'anonymous';
-	image.src = state.imgurl;
-	await image.decode();
-
-	
-
-	const faceDetection = new fp.FaceDetection({
-		locateFile: (file) => {
-			return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4/${file}`;
-		},
-	});
-
-	console.log(image);
-	faceDetection.setOptions({
-		minDetectionConfidence: 0.5,
-	});
-	faceDetection.onResults(drawFaceMesh);
-
-	await faceDetection.send({ image });
-};
-
-onMounted(() => {
-	loadFaceDetect();
-});
-
-// console.log(faceMesh);
 </script>
 <template>
 	<div class="grid grid-col grid-cols-2 mt-10 gap-2 w-9/12 mx-auto">
@@ -194,6 +117,4 @@ onMounted(() => {
 			</div>
 		</div>
 	</div>
-	<canvas id="canva" class="rounded-lg mt-4 mx-auto bg-slate-500"></canvas>
-	<canvas id="canva2" class="rounded-lg mt-4 mx-auto bg-slate-500"></canvas>
 </template>
