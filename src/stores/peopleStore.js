@@ -12,6 +12,7 @@ export const usePeopleStore = defineStore('people_store', {
 	actions: {
 		async getAll() {
 			try {
+				//move to helper
 				const resp = await axios.get(`${baseUrl}/api/person`);
 				this.people = resp.data.people;
 			} catch (error) {

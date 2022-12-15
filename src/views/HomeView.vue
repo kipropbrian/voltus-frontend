@@ -1,8 +1,73 @@
 <script setup>
-import { reactive } from 'vue';
+import { ref } from 'vue';
+import axios from 'axios';
+import { useAlertStore } from '@/stores/alertStore';
 
-const state = reactive({ imgurl: 'https://res.cloudinary.com/voltus/image/upload/v1668342671/voltus/xzmksyvrbmbtyldnc00l.png' })
+const alertStore = useAlertStore();
 
+const state = ref({ imgurl: '/blank-person-612x612.jpeg', uploadedImage: null });
+
+const updateImage = (e) => {
+	let files = e.target.files || e.dataTransfer.files;
+	if (!files.length) {
+		return;
+	}
+	const imgurl = URL.createObjectURL(files[0]);
+	const uploadedImage = files[0];
+	state.value = { imgurl, uploadedImage };
+};
+
+const dropHandler = (ev) => {
+	ev.preventDefault();
+
+	if (ev.dataTransfer.items) {
+		// Use DataTransferItemList interface to access the file
+		let item = ev.dataTransfer.items[0];
+		// If dropped items aren't files, reject them
+		if (item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png')) {
+			const uploadedImage = item.getAsFile();
+			const imgurl = URL.createObjectURL(uploadedImage);
+			state.value = { imgurl, uploadedImage };
+		}
+	}
+};
+
+const checkSize = (uploadedImage) => {
+	//check if image is larger than 2MB
+	const MAX_UPLOAD_SIZE = 2; //In MB
+	if (uploadedImage.size < 1024 * 1024 * MAX_UPLOAD_SIZE) {
+		return true;
+	} else {
+		//set alert
+		console.log('The uploaded image is too big', uploadedImage.size);
+		return false;
+	}
+};
+
+const uploadToCloudinary = async () => {
+	const baseUrl = import.meta.env.VITE_API_URL;
+	const { uploadedImage } = state.value;
+	const uploadUrl = `${baseUrl}/api/image/upload`;
+	if (uploadedImage && checkSize(uploadedImage)) {
+		try {
+			let form = new FormData();
+			form.append('image', uploadedImage, uploadedImage.name);
+			const config = {
+				headers: {
+					'content-type': 'multipart/form-data',
+					accept: 'application/json',
+				},
+			};
+			const results = await axios.post(uploadUrl, form, config);
+			alertStore.success(results.data.message);
+		} catch (e) {
+			alertStore.error(e.message);
+		}
+	} else {
+		//make this an alert
+		console.log('No image provided');
+	}
+};
 </script>
 <template>
 	<div class="grid grid-col grid-cols-2 mt-10 gap-2 w-9/12 mx-auto">
@@ -11,6 +76,8 @@ const state = reactive({ imgurl: 'https://res.cloudinary.com/voltus/image/upload
 				<label
 					for="dropzone-file"
 					class="flex flex-col items-center justify-center w-full h-48 border-2 border-sky-200 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+					@drop="dropHandler"
+					@dragover.prevent=""
 				>
 					<div class="flex flex-col items-center justify-center pt-5 pb-6">
 						<svg
@@ -31,9 +98,15 @@ const state = reactive({ imgurl: 'https://res.cloudinary.com/voltus/image/upload
 						<p class="mb-2 text-sm text-gray-500">
 							<span class="font-semibold">Click to upload</span> or drag and drop
 						</p>
-						<p class="text-xs text-gray-500">PNG, JPG or GIF (MAX. 2MB)</p>
+						<p class="text-xs text-gray-500">PNG, JPG (MAX. 2MB)</p>
 					</div>
-					<input id="dropzone-file" type="file" class="hidden" />
+					<input
+						id="dropzone-file"
+						type="file"
+						class="hidden"
+						@change="updateImage"
+						accept="image/png, image/jpeg"
+					/>
 				</label>
 			</div>
 			<hr />
@@ -47,7 +120,10 @@ const state = reactive({ imgurl: 'https://res.cloudinary.com/voltus/image/upload
 			</figure>
 
 			<div class="flex justify-center">
-				<button class="flex p-2 mt-8 pr-4 rounded-md bg-sky-400 text-slate-200 hover:bg-sky-300 shadow-lg">
+				<button
+					class="flex p-2 mt-8 pr-4 rounded-md bg-sky-400 text-slate-200 hover:bg-sky-300 shadow-lg"
+					@click.prevent="uploadToCloudinary"
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
