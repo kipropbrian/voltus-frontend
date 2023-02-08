@@ -1,3 +1,8 @@
+/**
+ * 
+ * Store dealing with politicians and other people of interest.
+ */
+
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
