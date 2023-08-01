@@ -1,52 +1,7 @@
 <script setup>
-import { ref } from 'vue';
 import { useFacePlusStore } from '@/stores/facePlusStore';
 
 const facePlusStore = useFacePlusStore();
-
-const state = ref({ imgurl: '/blank-person-612x612.jpeg', uploadedImage: null });
-let faceStyle = {};
-
-const dropHandler = (ev) => {
-	ev.preventDefault();
-
-	if (ev.dataTransfer.items) {
-		// Use DataTransferItemList interface to access the file
-		let item = ev.dataTransfer.items[0];
-		// If dropped items aren't files, reject them
-		if (item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png')) {
-			const uploadedImage = item.getAsFile();
-			const imgurl = URL.createObjectURL(uploadedImage);
-			state.value = { imgurl, uploadedImage };
-		}
-	}
-};
-
-const imageAnalyze = (uploadedImage) => {
-	facePlusStore.uploadedImage = uploadedImage;
-};
-
-//Move to imageHandler helper
-const drawFaceRectangle = (faceData) => {
-	let img = document.getElementById('canva1');
-	let widthPercentage = Math.abs(img.width / img.naturalWidth);
-	let heightPercentage = Math.abs(img.height / img.naturalHeight);
-
-	//Generate styles from facedata
-	faceData.info.faces.map((face, k) => {
-		let name = 'face'.concat(k + 1);
-		faceStyle[name] = {
-			position: 'absolute',
-			border: '1px solid skyblue',
-			'z-index': '1',
-			// transform: rotateZ(6.97501deg);
-			width: face.face_rectangle.width * widthPercentage + 'px',
-			height: face.face_rectangle.height * heightPercentage + 'px',
-			left: face.face_rectangle.left * widthPercentage + 'px',
-			top: face.face_rectangle.top * heightPercentage + 'px',
-		};
-	});
-};
 </script>
 <template>
 	<div class="grid grid-col grid-cols-2 mt-10 gap-2 w-9/12 mx-auto">
@@ -55,7 +10,7 @@ const drawFaceRectangle = (faceData) => {
 				<label
 					for="dropzone-file"
 					class="flex flex-col items-center justify-center w-full h-48 border-2 border-sky-200 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-					@drop="dropHandler"
+					@drop="facePlusStore.dropHandler"
 					@dragover.prevent=""
 				>
 					<div class="flex flex-col items-center justify-center pt-5 pb-6">
@@ -93,10 +48,10 @@ const drawFaceRectangle = (faceData) => {
 				<img
 					id="canva1"
 					class="h-auto rounded-lg shadow-lg shadow-gray-800 hover:shadow-sky-200"
-					:src="state.imgurl"
+					:src="facePlusStore.uploadedInfo.imgurl"
 					alt="user provided image"
 				/>
-				<div v-for="(box, k) in faceStyle" :key="k" :style="box"></div>
+				<div v-for="(box, k) in facePlusStore.faceStyles" :key="k" :style="box"></div>
 			</figure>
 
 			<div class="flex justify-center">

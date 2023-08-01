@@ -7,22 +7,31 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useAlertStore } from '@/stores/alertStore';
-import { checkSize, updateImage } from '@/helpers/imageHandler';
+import { checkSize, updateImage, drawFaceRectangle, dropHandler } from '@/helpers/imageHandler';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
 export const useFacePlusStore = defineStore('facePlusStore', {
 	state() {
 		return {
-            uploadedInfo: {},
-			faceStyle: {},
+			uploadedInfo: {
+				imgurl: '/blank-person-612x612.jpeg',
+				uploadedImage: null,
+			},
+			faceStyles: {},
 			facePlusData: {},
-            status: { loading: false }
+			status: { loading: false },
 		};
 	},
 	actions: {
 		uploadHandler(e) {
 			this.uploadedInfo = updateImage(e);
+		},
+		dropHandle(e) {
+			let images = dropHandler(e);
+			if (images !== null) {
+				this.uploadedInfo = images;
+			}
 		},
 		async uploadToCloudinary() {
 			const alertStore = useAlertStore();
@@ -45,7 +54,7 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 					this.status.loading = false;
 					this.facePlusData = results.data;
 					console.log(results.data);
-					drawFaceRectangle(results.data);
+					this.faceStyles = drawFaceRectangle(results.data);
 				} catch (e) {
 					//This will probably not catch 404,500 and other such errors
 					alertStore.error(e.message);
@@ -58,4 +67,5 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			}
 		},
 	},
+	persist: true,
 });
