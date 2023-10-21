@@ -67,5 +67,4 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			}
 		},
 	},
-	persist: true,
 });

@@ -19,3 +19,5 @@ npm run dev
 ```sh
 npm run build
 ```
+
+Some content may be stored in local storage
