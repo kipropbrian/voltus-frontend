@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import PoliticianListView from '@/views/Politician/ListView.vue';
 import PoliticianShowView from '@/views/Politician/ShowView.vue';
+import PoliticianEditView from '@/views/Politician/EditView.vue'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,13 +14,18 @@ const router = createRouter({
 		},
 		{
 			path: '/politicians',
-			name: 'politicians.lost',
+			name: 'politicians.view',
 			component: PoliticianListView,
 		},
 		{
-			path: '/politician/:id',
+			path: '/politician/show/:id',
 			name: 'politician.show',
 			component: PoliticianShowView,
+		},
+		{
+			path: '/politician/edit/:id',
+			name: 'politician.edit',
+			component: PoliticianEditView,
 		},
 	],
 });

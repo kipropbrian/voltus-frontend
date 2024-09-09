@@ -21,6 +21,7 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			faceStyles: {},
 			facePlusData: {},
 			status: { loading: false },
+			persons: {},
 		};
 	},
 	actions: {
@@ -33,7 +34,9 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 				this.uploadedInfo = images;
 			}
 		},
-		async uploadToCloudinary() {
+
+		//cancel upload dialog box not handled
+		async detectFaces() {
 			const alertStore = useAlertStore();
 			//Show loading status
 			const uploadUrl = `${baseUrl}/api/image/upload`;
@@ -52,9 +55,10 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 					alertStore.success(results.data.message);
 					//TODO: Persist data in local storage https://github.com/prazdevs/pinia-plugin-persistedstate
 					this.status.loading = false;
-					this.facePlusData = results.data;
-					console.log(results.data);
-					this.faceStyles = drawFaceRectangle(results.data);
+					this.facePlusData = results.data.info;
+					this.persons = results.data.info.persons;
+					console.log(results.data.message);
+					// this.faceStyles = drawFaceRectangle(results.data);
 				} catch (e) {
 					//This will probably not catch 404,500 and other such errors
 					alertStore.error(e.message);
