@@ -1,9 +1,3 @@
-/**
- * Pinia store to deal with all data realated to facial recognition
- * detection, search, dimensions e.t.c
- *
- */
-
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useAlertStore } from '@/stores/alertStore';
@@ -19,9 +13,14 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 				uploadedImage: null,
 			},
 			faceStyles: {},
-			facePlusData: {},
+			facePlusData: {
+				persons: [], // This will hold persons data
+				facepResponse: {
+					results: [], // This will hold face match results including confidence
+				},
+				imageuuids: [], // This will hold the image UUIDs
+			},
 			status: { loading: false },
-			persons: {},
 		};
 	},
 	actions: {
@@ -35,39 +34,71 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			}
 		},
 
-		//cancel upload dialog box not handled
 		async detectFaces() {
 			const alertStore = useAlertStore();
-			//Show loading status
+			// Show loading status
+			this.status.loading = true;
+
 			const uploadUrl = `${baseUrl}/api/image/upload`;
-			if (this.uploadedInfo.uploadedImage && checkSize(this.uploadedInfo.uploadedImage)) {
-				try {
-					let form = new FormData();
-					form.append('image', this.uploadedInfo.uploadedImage, this.uploadedInfo.uploadedImage.name);
-					const config = {
-						headers: {
-							'content-type': 'multipart/form-data',
-							accept: 'application/json',
-						},
-					};
-					const results = await axios.post(uploadUrl, form, config);
-					//TODO: Handle resp errors like 404,500 e.t.c
-					alertStore.success(results.data.message);
-					//TODO: Persist data in local storage https://github.com/prazdevs/pinia-plugin-persistedstate
+
+			if (this.uploadedInfo.uploadedImage) {
+				if (checkSize(this.uploadedInfo.uploadedImage)) {
+					try {
+						let form = new FormData();
+						form.append('image', this.uploadedInfo.uploadedImage, this.uploadedInfo.uploadedImage.name);
+
+						const config = {
+							headers: {
+								'content-type': 'multipart/form-data',
+								accept: 'application/json',
+							},
+						};
+
+						// Perform the API request
+						const results = await axios.post(uploadUrl, form, config);
+
+						// Handle the success response
+						alertStore.success(results.data.message);
+
+						// Apply Math.floor to the confidence values in the results array
+						const roundedResults = results.data.info.facepResponse.results.map((result) => {
+							return {
+								...result,
+								confidence: Math.floor(result.confidence), // Round confidence using Math.floor
+							};
+						});
+
+						// Update store state with the modified response
+						this.facePlusData = {
+							persons: results.data.info.persons, // Array of persons
+							facepResponse: {
+								results: roundedResults, // Array of results with rounded confidence scores
+							},
+							imageuuids: results.data.info.imageuuids, // Array of image UUIDs
+						};
+
+						// Stop the loading indicator
+						this.status.loading = false;
+
+						// Optional: Draw the face rectangles on the image
+						// this.faceStyles = drawFaceRectangle(results.data);
+
+						console.log('Face detection response:', results.data.message);
+					} catch (e) {
+						// Handle errors
+						alertStore.error(e.message);
+						this.status.loading = false;
+					}
+				} else {
+					// Handle the case where no image is uploaded
+					alertStore.error(
+						'The uploaded image exceeds the maximum size of 2MB. Please upload a smaller file.'
+					);
 					this.status.loading = false;
-					this.facePlusData = results.data.info;
-					this.persons = results.data.info.persons;
-					console.log(results.data.message);
-					// this.faceStyles = drawFaceRectangle(results.data);
-				} catch (e) {
-					//This will probably not catch 404,500 and other such errors
-					alertStore.error(e.message);
 				}
 			} else {
-				//make this an alert
 				alertStore.error('Please attach an image!');
-				this.status.value = { loading: false };
-				console.log('No image provided');
+				this.status.loading = false;
 			}
 		},
 	},
