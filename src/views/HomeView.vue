@@ -102,29 +102,28 @@ const { facePlusData } = storeToRefs(facePlusStore);
 				<div v-for="(box, k) in facePlusStore.faceStyles" :key="k" :style="box"></div>
 			</figure>
 		</div>
+
 		<div class="rounded px-2 border-1 shadow-md bg-gray-100">
 			<div class="bg-gray-200 mt-2 p-2 flex justify-center rounded-t-md">
 				<h2 class="text-2xl text-stone-500 font-semibold">Faces Detected</h2>
 			</div>
 			<hr class="mt-2" />
 
+			<!-- Loop through processed faces -->
 			<div
-				v-for="(person, index) in facePlusData.persons"
-				:key="person.uuid"
+				v-for="face in facePlusStore.processedFaces"
+				:key="face.face_token"
 				class="flex mt-2 p-2 bg-white shadow rounded-lg items-center"
 			>
-				<!-- Display the person's image from latest_image -->
-				<img class="rounded-full m-2 h-10 w-10" :src="person.latest_image?.image_url" alt="user portrait" />
+				<img class="rounded-full m-2 h-10 w-10" :src="face.image_url" alt="user portrait" />
 
 				<div class="ml-2 m-2">
-					<p class="font-medium">{{ person.name }}</p>
-					<p class="font-light text-slate-400">{{ person.about }}</p>
-					<p class="font-light text-slate-400">{{ person.email }}</p>
-					<p class="font-light text-slate-400">{{ person.gender }}</p>
-
-					<!-- Display the confidence of the face match -->
-					<p v-if="facePlusData.facepResponse.results[index]" class="font-light text-slate-400">
-						Confidence: {{ facePlusData.facepResponse.results[index].confidence }}%
+					<p class="font-medium">{{ face.name }}</p>
+					<p class="font-light text-slate-400">{{ face.about }}</p>
+					<p v-if="face.email" class="font-light text-slate-400">{{ face.email }}</p>
+					<p v-if="face.gender" class="font-light text-slate-400">{{ face.gender }}</p>
+					<p v-if="face.confidence !== null" class="font-light text-slate-400">
+						Confidence: {{ face.confidence }}%
 					</p>
 				</div>
 			</div>
