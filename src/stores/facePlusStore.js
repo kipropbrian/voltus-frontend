@@ -55,43 +55,35 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 							},
 						};
 
-						const results = await axios.post(uploadUrl, form, config);
-						console.log('jere', results);
+						const response = await axios.post(uploadUrl, form, config);
 
 						// Check if the response contains an error, such as AUTHENTICATION_ERROR
-						if (results.data.error_message) {
-							// Display the error message from the API
+						if (response.data.error_message) {
 							alertStore.error(`There was an issue with the request.`);
 							this.status.loading = false;
-							return; // Stop further processing if there's an error
+							return;
 						}
 
-						// Check if the response contains an error, such as AUTHENTICATION_ERROR
-						if (!results.data) {
-							// Display the error message from the API
-							alertStore.error(`There was an issue with the request!`);
-							this.status.loading = false;
-							return; // Stop further processing if there's an error
-						}
+						alertStore.success(response.data.message);
 
-						alertStore.success(results.data.message);
+						// Process the face matching and update processedFaces state
+						const processedFaces = this.processFaces(response.data.info);
 
-						// Update store state with response
+						// Update store state with the received response
 						this.facePlusData = {
-							persons: results.data.info.persons,
+							persons: response.data.info.persons,
 							facepResponse: {
-								results: results.data.info.facepResponse.results, // Array of results
-								faces: results.data.info.facepResponse.faces, // All detected faces
+								results: response.data.info.facepResponse.results,
+								faces: response.data.info.facepResponse.faces,
 							},
-							imageuuids: results.data.info.imageuuids,
+							imageuuids: response.data.info.imageuuids,
 						};
 
-						// Process face matching
-						this.processFaces();
+						// Update processed faces in the state
+						this.processedFaces = processedFaces;
 
 						this.status.loading = false;
 					} catch (e) {
-						console.log('d', e);
 						alertStore.error(e.message);
 						this.status.loading = false;
 					}
@@ -107,17 +99,33 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			}
 		},
 
-		// Function to match persons and confidence with detected faces
-		processFaces() {
-			const { faces, results } = this.facePlusData.facepResponse;
+		/**
+		 * Processes the detected faces and matches them with known persons using `user_id` or marks them as unknown.
+		 *
+		 * This function iterates over the detected faces from the `facepResponse.faces` array and attempts
+		 * to find a corresponding match in the `facepResponse.results` array based on the `user_id`.
+		 *
+		 * - If a match is found, it uses the `user_id` from the results to find the corresponding person
+		 *   in the `persons` array. The person's details (name, email, about, gender, and image) and
+		 *   confidence score are added to the processed face data.
+		 * - If no match is found for a detected face, the face is marked as "Unknown" and assigned default
+		 *   placeholder values (e.g., "No matching person found" and a placeholder image).
+		 *
+		 * The processed face data is returned and then stored in the `processedFaces` state.
+		 *
+		 * @param {Object} info - The `info` object from the API response, containing persons and facepResponse.
+		 * @returns {Array} processedFaces - Array of processed faces.
+		 */
+		processFaces(info) {
+			const { faces, results } = info.facepResponse;
 
-			this.processedFaces = faces.map((face) => {
-				// Find a match between the face and results
-				const match = results.find((result) => result.face_token === face.face_token);
+			const processedFaces = faces.map((face) => {
+				// Find a match between the face and results based on user_id, not face_token
+				const match = results.find((result) => result.user_id);
 
 				// If a match is found, associate with the person and confidence
 				if (match) {
-					const person = this.facePlusData.persons.find((p) => p.uuid === match.user_id);
+					const person = info.persons.find((p) => p.uuid === match.user_id);
 
 					if (person) {
 						return {
@@ -143,6 +151,8 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 					confidence: null,
 				};
 			});
+
+			return processedFaces;
 		},
 	},
 });
