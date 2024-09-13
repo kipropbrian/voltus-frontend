@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
 import { useAlertStore } from '@/stores/alertStore';
-import { checkSize, updateImage, drawFaceRectangle, dropHandler } from '@/helpers/imageHandler';
+import { detectFace, searchFace, processFaces } from '@/helpers/faceplusHandler'; // Import helpers
+import { checkSize, updateImage, dropHandler } from '@/helpers/imageHandler';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -14,15 +14,15 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			},
 			faceStyles: {},
 			facePlusData: {
-				persons: [], // This will hold persons data
+				persons: [],
 				facepResponse: {
-					results: [], // This will hold face match results including confidence
-					faces: [], // This will hold all detected faces
+					results: [],
+					faces: [],
 				},
-				imageuuids: [], // This will hold the image UUIDs
+				imageuuids: [],
 			},
 			status: { loading: false },
-			processedFaces: [], // This will hold the processed face data for the view
+			processedFaces: [],
 		};
 	},
 	actions: {
@@ -40,43 +40,30 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			const alertStore = useAlertStore();
 			this.status.loading = true;
 
-			const uploadUrl = `${baseUrl}/api/image/upload`;
-
 			if (this.uploadedInfo.uploadedImage) {
 				if (checkSize(this.uploadedInfo.uploadedImage)) {
 					try {
-						let form = new FormData();
-						form.append('image', this.uploadedInfo.uploadedImage, this.uploadedInfo.uploadedImage.name);
+						const response = await detectFace(this.uploadedInfo.uploadedImage, baseUrl); // Use helper
 
-						const config = {
-							headers: {
-								'content-type': 'multipart/form-data',
-								accept: 'application/json',
-							},
-						};
-
-						const response = await axios.post(uploadUrl, form, config);
-
-						// Check if the response contains an error, such as AUTHENTICATION_ERROR
-						if (response.data.error_message) {
-							alertStore.error(`There was an issue with the request.`);
+						if (response.error_message) {
+							alertStore.error('There was an issue with the request.');
 							this.status.loading = false;
 							return;
 						}
 
-						alertStore.success(response.data.message);
+						alertStore.success(response.message);
 
 						// Process the face matching and update processedFaces state
-						const processedFaces = this.processFaces(response.data.info);
+						const processedFaces = processFaces(response.info); // Use helper to process faces
 
 						// Update store state with the received response
 						this.facePlusData = {
-							persons: response.data.info.persons,
+							persons: response.info.persons,
 							facepResponse: {
-								results: response.data.info.facepResponse.results,
-								faces: response.data.info.facepResponse.faces,
+								results: response.info.facepResponse.results,
+								faces: response.info.facepResponse.faces,
 							},
-							imageuuids: response.data.info.imageuuids,
+							imageuuids: response.info.imageuuids,
 						};
 
 						// Update processed faces in the state
@@ -99,60 +86,19 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			}
 		},
 
-		/**
-		 * Processes the detected faces and matches them with known persons using `user_id` or marks them as unknown.
-		 *
-		 * This function iterates over the detected faces from the `facepResponse.faces` array and attempts
-		 * to find a corresponding match in the `facepResponse.results` array based on the `user_id`.
-		 *
-		 * - If a match is found, it uses the `user_id` from the results to find the corresponding person
-		 *   in the `persons` array. The person's details (name, email, about, gender, and image) and
-		 *   confidence score are added to the processed face data.
-		 * - If no match is found for a detected face, the face is marked as "Unknown" and assigned default
-		 *   placeholder values (e.g., "No matching person found" and a placeholder image).
-		 *
-		 * The processed face data is returned and then stored in the `processedFaces` state.
-		 *
-		 * @param {Object} info - The `info` object from the API response, containing persons and facepResponse.
-		 * @returns {Array} processedFaces - Array of processed faces.
-		 */
-		processFaces(info) {
-			const { faces, results } = info.facepResponse;
-
-			const processedFaces = faces.map((face) => {
-				// Find a match between the face and results based on user_id, not face_token
-				const match = results.find((result) => result.user_id);
-
-				// If a match is found, associate with the person and confidence
-				if (match) {
-					const person = info.persons.find((p) => p.uuid === match.user_id);
-
-					if (person) {
-						return {
-							...face,
-							name: person.name,
-							email: person.email,
-							about: person.about,
-							gender: person.gender,
-							image_url: person.latest_image?.image_url,
-							confidence: Math.floor(match.confidence), // Round confidence using Math.floor
-						};
-					}
-				}
-
-				// If no match, return an unknown individual
-				return {
-					...face,
-					name: 'Unknown',
-					email: null,
-					about: 'No matching person found',
-					gender: null,
-					image_url: '/blank-person-612x612.jpeg',
-					confidence: null,
-				};
-			});
-
-			return processedFaces;
+		// Additional searchFace action
+		async searchForFace(faceToken, faceSetToken) {
+			const alertStore = useAlertStore();
+			this.status.loading = true;
+			try {
+				const response = await searchFace(faceToken, faceSetToken, baseUrl); // Use helper for search
+				// Handle search response
+				alertStore.success('Face search completed');
+				return response;
+			} catch (e) {
+				alertStore.error(e.message);
+				this.status.loading = false;
+			}
 		},
 	},
 });
