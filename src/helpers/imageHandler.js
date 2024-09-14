@@ -1,6 +1,6 @@
 /**
  * Helper functions
- * 
+ *
  */
 
 const dropHandler = (ev) => {
@@ -19,7 +19,7 @@ const dropHandler = (ev) => {
 	return null;
 };
 
-//Returns css style for rectangle to draw on the faces of user supplied image. 
+//Returns css style for rectangle to draw on the faces of user supplied image.
 const drawFaceRectangle = (faceData) => {
 	let img = document.getElementById('canva1');
 	let faceStyle = {};
@@ -66,4 +66,4 @@ const updateImage = (e) => {
 	return { imgurl, uploadedImage };
 };
 
-export { checkSize, updateImage, drawFaceRectangle, dropHandler }
+export { checkSize, updateImage, drawFaceRectangle, dropHandler };

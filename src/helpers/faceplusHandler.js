@@ -18,7 +18,7 @@ export async function detectFace(imageFile, baseUrl) {
 		},
 	};
 
-	const response = await axios.post(`${baseUrl}/api/face/detect`, form, config);
+	const response = await axios.post(`${baseUrl}/api/face/fullsearch`, form, config);
 	return response.data;
 }
 
@@ -39,46 +39,23 @@ export async function searchFace(faceToken, faceSetToken, baseUrl) {
 }
 
 /**
- * Processes the detected faces and matches them with known persons using `user_id` or marks them as unknown.
- *
- * @param {Object} info - The `info` object from the API response, containing persons and facepResponse.
- * @returns {Array} processedFaces - Array of processed faces.
+ * Processes the detected faces and matches them with known persons or marks them as unknown.
+ * Maps face data and search results into a simplified structure for easier frontend handling.
+ * @param {Array} searchResults - Array of search results from the backend response.
+ * @returns {Array} processedFaces - Array of processed face data for display.
  */
-export function processFaces(info) {
-	const { faces, results } = info.facepResponse;
-
-	const processedFaces = faces.map((face) => {
-		// Find a match between the face and results based on user_id, not face_token
-		const match = results.find((result) => result.user_id);
-
-		// If a match is found, associate with the person and confidence
-		if (match) {
-			const person = info.persons.find((p) => p.uuid === match.user_id);
-
-			if (person) {
-				return {
-					...face,
-					name: person.name,
-					email: person.email,
-					about: person.about,
-					gender: person.gender,
-					image_url: person.latest_image?.image_url,
-					confidence: Math.floor(match.confidence), // Round confidence using Math.floor
-				};
-			}
-		}
-
-		// If no match, return an unknown individual
+export function processFaces(searchResults) {
+	return searchResults.map((result) => {
+		const person = result.person_data.length ? result.person_data[0] : null;
 		return {
-			...face,
-			name: 'Unknown',
-			email: null,
-			about: 'No matching person found',
-			gender: null,
-			image_url: '/blank-person-612x612.jpeg',
-			confidence: null,
+			face_token: result.face_token,
+			name: person ? person.name : 'Unknown',
+			email: person ? person.email : null,
+			about: person ? person.about : 'No matching person found',
+			gender: person ? person.gender : null,
+			image_url: person ? person.latest_image.image_url : '/blank-person-612x612.jpeg',
+			confidence: Math.floor(result.confidence),
+			face_rectangle: result.face_rectangle,
 		};
 	});
-
-	return processedFaces;
 }

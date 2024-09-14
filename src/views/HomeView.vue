@@ -103,6 +103,7 @@ const { facePlusData } = storeToRefs(facePlusStore);
 			</figure>
 		</div>
 
+		<!-- Display detected face data -->
 		<div class="rounded px-2 border-1 shadow-md bg-gray-100">
 			<div class="bg-gray-200 mt-2 p-2 flex justify-center rounded-t-md">
 				<h2 class="text-2xl text-stone-500 font-semibold">Faces Detected</h2>
@@ -115,8 +116,9 @@ const { facePlusData } = storeToRefs(facePlusStore);
 				:key="face.face_token"
 				class="flex mt-2 p-2 bg-white shadow rounded-lg items-center"
 			>
+				<!-- Display detected person's image -->
 				<img class="rounded-full m-2 h-10 w-10" :src="face.image_url" alt="user portrait" />
-
+				<!-- Display detected person's info -->
 				<div class="ml-2 m-2">
 					<p class="font-medium">{{ face.name }}</p>
 					<p class="font-light text-slate-400">{{ face.about }}</p>

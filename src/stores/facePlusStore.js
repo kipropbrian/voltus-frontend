@@ -15,16 +15,14 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			faceStyles: {},
 			facePlusData: {
 				persons: [],
-				facepResponse: {
-					results: [],
-					faces: [],
-				},
+				facepResponse: [],
 				imageuuids: [],
 			},
 			status: { loading: false },
-			processedFaces: [],
+			processedFaces: [], // This will hold the processed face data for the view
 		};
 	},
+
 	actions: {
 		uploadHandler(e) {
 			this.uploadedInfo = updateImage(e);
@@ -54,17 +52,10 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 						alertStore.success(response.message);
 
 						// Process the face matching and update processedFaces state
-						const processedFaces = processFaces(response.info); // Use helper to process faces
+						const processedFaces = processFaces(response.searchResults);
 
 						// Update store state with the received response
-						this.facePlusData = {
-							persons: response.info.persons,
-							facepResponse: {
-								results: response.info.facepResponse.results,
-								faces: response.info.facepResponse.faces,
-							},
-							imageuuids: response.info.imageuuids,
-						};
+						this.facePlusData.facepResponse = response.searchResults;
 
 						// Update processed faces in the state
 						this.processedFaces = processedFaces;
