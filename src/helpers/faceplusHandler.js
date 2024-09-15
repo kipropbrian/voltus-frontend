@@ -16,6 +16,7 @@ export async function detectFace(imageFile, baseUrl) {
 			'content-type': 'multipart/form-data',
 			accept: 'application/json',
 		},
+		withCredentials: true,
 	};
 
 	const response = await axios.post(`${baseUrl}/api/face/fullsearch`, form, config);

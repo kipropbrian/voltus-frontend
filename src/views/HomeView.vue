@@ -122,7 +122,6 @@ const { facePlusData } = storeToRefs(facePlusStore);
 				<div class="ml-2 m-2">
 					<p class="font-medium">{{ face.name }}</p>
 					<p class="font-light text-slate-400">{{ face.about }}</p>
-					<p v-if="face.email" class="font-light text-slate-400">{{ face.email }}</p>
 					<p v-if="face.gender" class="font-light text-slate-400">{{ face.gender }}</p>
 					<p v-if="face.confidence !== null" class="font-light text-slate-400">
 						Confidence: {{ face.confidence }}%
