@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import HomeView from '@/views/HomeView.vue';
 import PoliticianListView from '@/views/Politician/ListView.vue';
 import PoliticianShowView from '@/views/Politician/ShowView.vue';
-import PoliticianEditView from '@/views/Politician/EditView.vue'
+import PoliticianEditView from '@/views/Politician/EditView.vue';
+import PoliticianNewView from '@/views/Politician/NewView.vue';
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
 			path: '/politician/edit/:id',
 			name: 'politician.edit',
 			component: PoliticianEditView,
+		},
+		{
+			path: '/politician/new',
+			name: 'politician.new',
+			component: PoliticianNewView,
 		},
 	],
 });

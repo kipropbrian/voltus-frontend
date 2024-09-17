@@ -1,22 +1,24 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
-import { usePeopleStore } from '../../stores/peopleStore';
+import { usePeopleStore } from '@/stores/peopleStore';
 
 const peopleStore = usePeopleStore();
 
 const { people } = storeToRefs(peopleStore);
 
-onMounted( async () => {
+onMounted(async () => {
 	peopleStore.getAll();
 });
 </script>
 <template>
-	<div class="bg-gray-100 flex  justify-center h-[60vh]">
+	<div class="flex bg-gray-100 justify-center">
 		<div class="w-full lg:w-2/3">
-			<button class="mt-2 px-6 py-3 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded">
-				<p class="text-sm font-medium leading-none text-white">Add Person</p>
-			</button>
+			<routerLink :to="{ name: 'politician.new' }">
+				<button class="mt-2 px-6 py-3 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded">
+					<p class="text-sm font-medium leading-none text-white">Add Person</p>
+				</button>
+			</routerLink>
 
 			<div v-if="people.length" class="bg-white shadow-md rounded my-2">
 				<table class="min-w-max w-full table-auto">

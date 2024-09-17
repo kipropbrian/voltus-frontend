@@ -67,7 +67,7 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 					}
 				} else {
 					alertStore.error(
-						'The uploaded image exceeds the maximum size of 2MB. Please upload a smaller file.'
+						'The uploaded image exceeds the maximum size of 2MB. Please upload a smaller file.',
 					);
 					this.status.loading = false;
 				}
