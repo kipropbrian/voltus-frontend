@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import { useAlertStore } from '@/stores/alertStore';
+import { updateImage } from '@/helpers/imageHandler';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 /**
@@ -12,9 +13,19 @@ export const usePeopleStore = defineStore('people_store', {
 		people: {},
 		person: {},
 		isSubmitting: false,
+		newFormData: {
+			name: '',
+			gender: '',
+			details: '',
+			file: null, // To hold the file input
+		},
+		errors: null,
 	}),
 
 	actions: {
+		uploadHandler(e) {
+			this.newFormData.file = e.target.files[0];
+		},
 		async getAll() {
 			try {
 				//move to helper
@@ -42,19 +53,31 @@ export const usePeopleStore = defineStore('people_store', {
 			}
 		},
 		// Add the new createPerson action to create a person record
-		async createPerson(personData) {
+		async createPerson() {
 			const alertStore = useAlertStore();
 			try {
+				const formData = new FormData();
+				formData.append('name', this.newFormData.name);
+				formData.append('gender', this.newFormData.gender);
+				formData.append('about', this.newFormData.details);
+				if (this.newFormData.file) {
+					formData.append('image', this.newFormData.file);
+				}
 				// Post request to create a new person
-				const response = await axios.post(`${baseUrl}/api/person`, personData);
+				const response = await axios.post(`${baseUrl}/api/person`, formData);
 
-				// Optionally, update local people list or person after creation
-				this.people.push(response.data.person); // Add the newly created person to the store
+				if (response.status === 201) {
+					this.people.push(response.data.person);
+					alertStore.info(response.message);
+					// Redirect to the desired route (e.g., the list of people)
+					router.push({ name: 'people-list' });
+				}
 
 				return response.data.person;
 			} catch (error) {
+				console.log(error);
 				this.errors = error.response?.data || error.message;
-				alertStore.error('There was an issue with the request.');
+				alertStore.error(this.errors.error);
 			}
 		},
 	},
