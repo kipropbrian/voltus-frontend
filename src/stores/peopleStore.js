@@ -27,6 +27,7 @@ export const usePeopleStore = defineStore('people_store', {
 			this.newFormData.file = e.target.files[0];
 		},
 		async getAll() {
+			const alertStore = useAlertStore();
 			try {
 				//move to helper
 				const resp = await axios.get(`${baseUrl}/api/person`);
@@ -67,17 +68,27 @@ export const usePeopleStore = defineStore('people_store', {
 				const response = await axios.post(`${baseUrl}/api/person`, formData);
 
 				if (response.status === 201) {
-					this.people.push(response.data.person);
-					alertStore.info(response.message);
-					// Redirect to the desired route (e.g., the list of people)
-					router.push({ name: 'people-list' });
+					alertStore.success(response.data.message);
 				}
-
-				return response.data.person;
 			} catch (error) {
 				console.log(error);
 				this.errors = error.response?.data || error.message;
 				alertStore.error(this.errors.error);
+			}
+		},
+		// Method to delete a person
+		async deletePerson(personId) {
+			if (confirm('Are you sure you want to delete this person?')) {
+				const alertStore = useAlertStore();
+				try {
+					// Make a DELETE request to the API
+					await axios.delete(`${baseUrl}/api/person/${personId}`);
+					// Update the list by refetching people after deletion
+					await this.getAll();
+					alertStore.success('Person deleted successfully');
+				} catch (error) {
+					alertStore.error(error.message);
+				}
 			}
 		},
 	},

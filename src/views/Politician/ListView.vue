@@ -25,7 +25,6 @@ onMounted(async () => {
 					<thead>
 						<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 							<th class="py-3 px-6 text-left">Name</th>
-							<th class="py-3 px-6 text-left">Email</th>
 							<th class="py-3 px-6 text-center">Gender</th>
 							<th class="py-3 px-6 text-center">Actions</th>
 						</tr>
@@ -41,11 +40,6 @@ onMounted(async () => {
 										/>
 									</div>
 									<span class="font-medium">{{ person.name }}</span>
-								</div>
-							</td>
-							<td class="py-3 px-6 text-left">
-								<div class="flex items-center">
-									<span>{{ person.email }}</span>
 								</div>
 							</td>
 
@@ -96,7 +90,10 @@ onMounted(async () => {
 											</svg>
 										</router-link>
 									</div>
-									<div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+									<div
+										@click="peopleStore.deletePerson(person.id)"
+										class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
+									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"

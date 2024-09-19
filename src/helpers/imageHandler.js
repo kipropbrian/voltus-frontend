@@ -27,7 +27,7 @@ const drawFaceRectangle = (faceData) => {
 	let heightPercentage = Math.abs(img.height / img.naturalHeight);
 
 	//Generate styles from facedata
-	faceData.info.faces.map((face, k) => {
+	faceData.map((face, k) => {
 		let name = 'face'.concat(k + 1);
 		faceStyle[name] = {
 			position: 'absolute',
