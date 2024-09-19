@@ -4,11 +4,11 @@ import { ref } from 'vue';
 import { onMounted } from 'vue';
 import { usePeopleStore } from '@/stores/peopleStore';
 import Delete from '../../components/Helpers/Delete.vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const peopleStore = usePeopleStore();
-
 const { people } = storeToRefs(peopleStore);
-
 const isDeleteDialogOpen = ref(false);
 const personToDelete = ref(null);
 
@@ -22,6 +22,11 @@ const openDeleteDialog = (id) => {
 const deletePerson = (personId) => {
 	peopleStore.deletePerson(personId);
 	isDeleteDialogOpen.value = false;
+};
+
+// Navigate to show route
+const goToShowPerson = (personId) => {
+	router.push({ name: 'politician.show', params: { id: personId } });
 };
 
 onMounted(async () => {
@@ -48,7 +53,7 @@ onMounted(async () => {
 					</thead>
 					<tbody v-for="person in people" :key="person.id" class="text-gray-600 text-sm font-light">
 						<tr class="border-b border-gray-200 hover:bg-gray-100">
-							<td class="py-3 px-6 text-left whitespace-nowrap">
+							<td class="py-3 px-6 text-left whitespace-nowrap" @click="goToShowPerson(person.id)">
 								<div class="flex items-center">
 									<div class="mr-2">
 										<img
@@ -60,7 +65,7 @@ onMounted(async () => {
 								</div>
 							</td>
 
-							<td class="py-3 px-6 text-center">
+							<td class="py-3 px-6 text-center" @click="goToShowPerson(person.id)">
 								<span class="bg-purple-200 text-purple-600 py-1 px-3 rounded-full text-xs">{{
 									person.gender
 								}}</span>

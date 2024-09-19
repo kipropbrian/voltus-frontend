@@ -41,12 +41,13 @@ export const usePeopleStore = defineStore('people_store', {
 			const alertStore = useAlertStore();
 			try {
 				// Find the person with the matching id
-				this.person = this.people.find((item) => item.id == id) || {};
-
+				if (this.people.length) {
+					this.person = this.people.find((item) => item.id == id) || {};
+				}
 				// Check if the person's details are already loaded
-				if (!this.person) {
+				if (!this.person.length) {
 					const response = await axios.get(`${baseUrl}/api/person/${id}`);
-					return response.data;
+					this.person = response.data.person;
 				}
 				return this.person;
 			} catch (error) {
@@ -102,7 +103,7 @@ export const usePeopleStore = defineStore('people_store', {
 				details: '',
 				file: null,
 			};
-			this.submitted = false;
+			this.isSubmitting = false;
 		},
 	},
 });
