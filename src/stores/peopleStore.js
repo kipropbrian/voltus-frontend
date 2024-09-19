@@ -13,6 +13,7 @@ export const usePeopleStore = defineStore('people_store', {
 		people: {},
 		person: {},
 		isSubmitting: false,
+		submitted: false,
 		newFormData: {
 			name: '',
 			gender: '',
@@ -57,6 +58,7 @@ export const usePeopleStore = defineStore('people_store', {
 		async createPerson() {
 			const alertStore = useAlertStore();
 			try {
+				this.isSubmitting = true;
 				const formData = new FormData();
 				formData.append('name', this.newFormData.name);
 				formData.append('gender', this.newFormData.gender);
@@ -68,28 +70,39 @@ export const usePeopleStore = defineStore('people_store', {
 				const response = await axios.post(`${baseUrl}/api/person`, formData);
 
 				if (response.status === 201) {
+					this.submitted = true;
+					this.isSubmitting = false;
+					this.clearFormData();
 					alertStore.success(response.data.message);
 				}
 			} catch (error) {
-				console.log(error);
+				this.isSubmitting = false;
 				this.errors = error.response?.data || error.message;
 				alertStore.error(this.errors.error);
 			}
 		},
 		// Method to delete a person
 		async deletePerson(personId) {
-			if (confirm('Are you sure you want to delete this person?')) {
-				const alertStore = useAlertStore();
-				try {
-					// Make a DELETE request to the API
-					await axios.delete(`${baseUrl}/api/person/${personId}`);
-					// Update the list by refetching people after deletion
-					await this.getAll();
-					alertStore.success('Person deleted successfully');
-				} catch (error) {
-					alertStore.error(error.message);
-				}
+			const alertStore = useAlertStore();
+			try {
+				// Make a DELETE request to the API
+				await axios.delete(`${baseUrl}/api/person/${personId}`);
+				// Update the list by refetching people after deletion
+				await this.getAll();
+				alertStore.success('Person deleted successfully');
+			} catch (error) {
+				alertStore.error(error.message);
 			}
+		},
+		clearFormData() {
+			// Reset newFormData to its initial state
+			this.newFormData = {
+				name: '',
+				gender: '',
+				details: '',
+				file: null,
+			};
+			this.submitted = false;
 		},
 	},
 });

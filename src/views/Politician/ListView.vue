@@ -1,11 +1,28 @@
 <script setup>
 import { storeToRefs } from 'pinia';
+import { ref } from 'vue';
 import { onMounted } from 'vue';
 import { usePeopleStore } from '@/stores/peopleStore';
+import Delete from '../../components/Helpers/Delete.vue';
 
 const peopleStore = usePeopleStore();
 
 const { people } = storeToRefs(peopleStore);
+
+const isDeleteDialogOpen = ref(false);
+const personToDelete = ref(null);
+
+// Open delete dialog
+const openDeleteDialog = (id) => {
+	personToDelete.value = id;
+	isDeleteDialogOpen.value = true;
+};
+
+// Delete person when confirmed by child
+const deletePerson = (personId) => {
+	peopleStore.deletePerson(personId);
+	isDeleteDialogOpen.value = false;
+};
 
 onMounted(async () => {
 	peopleStore.getAll();
@@ -91,7 +108,7 @@ onMounted(async () => {
 										</router-link>
 									</div>
 									<div
-										@click="peopleStore.deletePerson(person.id)"
+										@click="openDeleteDialog(person.id)"
 										class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
 									>
 										<svg
@@ -118,5 +135,12 @@ onMounted(async () => {
 				<div class="p-2 text-center text-bold">No records found</div>
 			</div>
 		</div>
+		<!-- Delete Dialog Component -->
+		<Delete
+			v-if="isDeleteDialogOpen"
+			:personId="personToDelete"
+			@close="isDeleteDialogOpen = false"
+			@confirm-delete="deletePerson"
+		/>
 	</div>
 </template>
