@@ -95,6 +95,19 @@ export const usePeopleStore = defineStore('people_store', {
 				alertStore.error(error.message);
 			}
 		},
+		//probably will delete and move to backend
+		async syncImageToPerson(image, person) {
+			try {
+				const imageSyncUrl = `${baseUrl}/api/image/sync`;
+				await axios.post(imageSyncUrl, {
+					imageId: image.id,
+					personUuid: person.uuid,
+				});
+				console.log('sync succesful');
+			} catch (error) {
+				console.log('Error syncing ', error);
+			}
+		},
 		clearFormData() {
 			// Reset newFormData to its initial state
 			this.newFormData = {

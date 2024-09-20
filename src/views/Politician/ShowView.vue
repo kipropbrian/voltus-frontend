@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { usePeopleStore } from '../../stores/peopleStore';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 
@@ -17,15 +17,40 @@ onMounted(async () => {
 	const personId = route.params.id;
 	await peopleStore.getPersonById(personId);
 });
+
+const router = useRouter();
+
+const goBack = () => {
+	router.back();
+};
 </script>
 
 <template>
 	<div class="flex bg-gray-100 justify-center m-2">
 		<div class="w-full bg-white lg:w-2/3">
+			<div class="flex items-center m-4">
+				<!-- Back Button -->
+				<button
+					@click="goBack"
+					class="mr-4 flex items-center text-gray-600 hover:text-gray-900 focus:outline-none"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+						<path
+							fill-rule="evenodd"
+							d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+					<span class="ml-2">Back</span>
+				</button>
+
+				<!-- Title -->
+				<h1 class="text-2xl font-bold">Person Details</h1>
+			</div>
+
 			<div v-if="peopleStore.person" class="shadow rounded-lg p-4">
-				<h1 class="text-2xl font-bold mb-4">Person Details</h1>
 				<div class="bg-white p-4 shadow rounded-lg w-4/5">
-					<dl class="divide-y divide-gray-100 mx-8">
+					<dl class="divide-y divide-gray-100">
 						<div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 bg-gray-100">
 							<dt class="text-sm font-medium leading-6 text-gray-900 px-4">Full name</dt>
 							<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
@@ -66,29 +91,27 @@ onMounted(async () => {
 							</dd>
 						</div>
 					</dl>
-				</div>
-				<div
-					class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 shadow rounded-lg p-4"
-				>
-					<div
-						v-for="image in peopleStore.person.images"
-						:key="image.id"
-						class="text-center flex-none"
-					>
+
+					<!-- Image Display and Delete Section -->
+					<div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div
-							class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80"
+							v-for="image in peopleStore.person.images"
+							:key="image.id"
+							class="flex flex-col items-center"
 						>
 							<img
 								:src="image.image_url_secure"
 								alt="person.name"
-								class="h-full w-full object-cover object-center lg:h-full lg:w-full"
+								class="object-cover w-full h-48 rounded"
 							/>
-						</div>
-						<div class="mt-4 flex justify-between">
-							<div>
-								<p class="mt-1 text-sm text-gray-500">Face Token: {{ image.face_token }}</p>
-								<p class="mt-1 text-sm text-gray-500">Detected {{ image.detected }}</p>
-								<p class="mt-1 text-sm text-gray-500">Created at: {{ formatDate(image.created_at) }}</p>
+							<div class="mt-4 flex justify-start w-full">
+								<div>
+									<p class="mt-1 text-sm text-gray-500">Face Token: {{ image.face_token }}</p>
+									<p class="mt-1 text-sm text-gray-500">Detected {{ image.detected }}</p>
+									<p class="mt-1 text-sm text-gray-500">
+										Created at: {{ formatDate(image.created_at) }}
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>

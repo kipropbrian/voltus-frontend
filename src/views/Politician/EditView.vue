@@ -1,140 +1,127 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { usePeopleStore } from '../../stores/peopleStore';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { PhotoIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/solid';
 import axios from 'axios';
 const baseUrl = import.meta.env.VITE_API_URL;
 
 const route = useRoute();
 const peopleStore = usePeopleStore();
-const person = ref(null);
 
 onMounted(async () => {
 	const personId = route.params.id;
-	person.value = await peopleStore.getPersonById(personId);
+	await peopleStore.getPersonById(personId);
 });
 
-const updatePerson = async () => {
-	// Implement the logic to update the person's details
-	// You may need to call an API or dispatch an action from your store
-};
+const router = useRouter();
 
-const uploadImage = async (event) => {
-	const file = event.target.files[0];
-	if (!file) return;
-
-	// Implement your logic to upload the image
-	// This might involve creating FormData and sending it to your API
-};
-
-const syncImageToPerson = async (image, person) => {
-	try {
-		const imageSyncUrl = `${baseUrl}/api/image/sync`;
-		await axios.post(imageSyncUrl, {
-			imageId: image.id,
-			personUuid: person.uuid,
-		});
-		console.log('sync succesful');
-	} catch (error) {
-		console.log('Error syncing ', error);
-	}
+const goBack = () => {
+	router.back();
 };
 </script>
 
 <template>
-	<div class="flex bg-gray-100 justify-center">
-		<div class="w-full lg:w-2/3">
-			<div v-if="person" class="shadow rounded-lg p-4">
-				<h1 class="text-2xl font-bold mb-4">Edit Person</h1>
-				<form @submit.prevent="updatePerson" class="bg-white p-4 shadow rounded-lg w-4/5">
-					<div class="divide-y divide-gray-100 mx-8">
-						<div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 bg-gray-100">
-							<label for="name" class="text-sm font-medium leading-6 text-gray-900 px-4">Full name</label>
-							<input
-								id="name"
-								v-model="person.name"
-								type="text"
-								class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 border rounded px-2 py-1 w-full"
-							/>
-						</div>
-						<div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-							<label for="gender" class="text-sm font-medium leading-6 text-gray-900 px-4">Gender</label>
-							<input
-								id="gender"
-								v-model="person.gender"
-								type="text"
-								class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 border rounded px-2 py-1 w-full"
-							/>
-						</div>
-						<div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 bg-gray-100">
-							<label for="about" class="text-sm font-medium leading-6 text-gray-900 px-4">Details</label>
-							<textarea
-								id="about"
-								v-model="person.about"
-								class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 border rounded px-2 py-1 w-full"
-								rows="3"
-							></textarea>
-						</div>
-						<!-- Additional fields can be added here if necessary -->
-						<div class="flex justify-start mt-4">
-							<button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-								Save Changes
-							</button>
+	<div class="flex bg-gray-100 justify-center p-2">
+		<div class="w-full bg-white lg:w-2/3">
+			<div class="flex items-center m-4">
+				<!-- Back Button -->
+				<button
+					@click="goBack"
+					class="mr-4 flex items-center text-gray-600 hover:text-gray-900 focus:outline-none"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+						<path
+							fill-rule="evenodd"
+							d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+					<span class="ml-2">Back</span>
+				</button>
+
+				<!-- Title -->
+				<h1 class="text-2xl font-bold">Edit Person</h1>
+			</div>
+
+			<div v-if="peopleStore.person" class="shadow rounded-lg p-4">
+				<form @submit.prevent="peopleStore.updatePerson" class="bg-white p-4 shadow rounded-lg w-4/5">
+					<div class="divide-y divide-gray-100">
+						<div class="border-b border-gray-900/10 pb-4">
+							<h2 class="text-base font-semibold leading-7 text-gray-900">Profile</h2>
+							<p class="mt-1 text-sm leading-6 text-gray-600">
+								This information will be displayed publicly so be careful what you share.
+							</p>
+
+							<div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+								<div class="sm:col-span-3">
+									<label for="first-name" class="block text-sm font-medium leading-6 text-gray-900"
+										>Full Names
+									</label>
+									<div class="mt-2">
+										<input
+											type="text"
+											name="name"
+											id="name"
+											v-model="peopleStore.person.name"
+											class="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+										/>
+									</div>
+								</div>
+								<div class="sm:col-span-full">
+									<label for="country" class="block text-sm font-medium leading-6 text-gray-900"
+										>Gender</label
+									>
+									<div class="mt-2">
+										<select
+											id="gender"
+											v-model="peopleStore.person.gender"
+											name="gender"
+											class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+										>
+											<option value="male">Male</option>
+											<option value="female">Female</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-span-full">
+									<label for="about" class="block text-sm font-medium leading-6 text-gray-900"
+										>About</label
+									>
+									<div class="mt-2">
+										<textarea
+											id="about"
+											name="about"
+											v-model="peopleStore.person.about"
+											rows="3"
+											class="block w-2/3 px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+										></textarea>
+									</div>
+								</div>
+							</div>
+							<div class="flex justify-start mt-4">
+								<button
+									type="submit"
+									class="px-4 py-2 mt-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+								>
+									Save Changes
+								</button>
+							</div>
 						</div>
 					</div>
 
 					<!-- Image Display and Delete Section -->
-					<div
-						class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 shadow rounded-lg p-4"
-					>
-						<div v-for="image in person.images" :key="image.id" class="text-center flex-none">
-							<div
-								class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80"
-							>
-								<img
-									:src="image.image_url_secure"
-									alt="person.name"
-									class="h-full w-full object-cover object-center lg:h-full lg:w-full"
-								/>
-							</div>
-							<div class="mt-4 flex justify-start">
-								<div>
-									<p class="mt-1 text-gray-500">Face Token: {{ image.face_token }}</p>
-									<div v-if="image.detected">
-										<p class="mt-2 flex items-center text-lg text-gray-500">
-											Synced
-											<CheckCircleIcon
-												class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400 mx-1"
-												aria-hidden="true"
-											/>
-										</p>
-									</div>
-									<div v-else>
-										<p class="mt-2 flex items-center text-lg text-gray-500">
-											Not Synced
-											<XCircleIcon
-												class="flex-shrink-0 mr-1.5 h-5 w-5 text-red-400 mx-1"
-												aria-hidden="true"
-											/>
-										</p>
-									</div>
-								</div>
-							</div>
-							<div class="flex flex-row gap-8 shrink-0 mt-2">
-								<button
-									:disabled="image.detected"
-									@click.prevent="syncImageToPerson(image, person)"
-									class="bg-cyan-500 shadow-lg shadow-cyan-500/50 text-white font-bold py-2 px-4 rounded"
-								>
-									Connect
-								</button>
-								<button
-									class="bg-red-500 shadow-lg shadow-red-500/50 text-white font-bold py-2 px-4 rounded"
-								>
-									Delete
-								</button>
-							</div>
+					<div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div
+							v-for="image in peopleStore.person.images"
+							:key="image.id"
+							class="flex flex-col items-center"
+						>
+							<img
+								:src="image.image_url_secure"
+								alt="person.name"
+								class="object-cover w-full h-48 rounded"
+							/>
 						</div>
 					</div>
 					<div class="col-span-full">
@@ -165,7 +152,3 @@ const syncImageToPerson = async (image, person) => {
 		</div>
 	</div>
 </template>
-
-<style scoped>
-/* Tailwind CSS styles */
-</style>
