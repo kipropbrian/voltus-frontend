@@ -16,6 +16,9 @@
 						>Politicians</router-link
 					>
 				</nav>
+				<nav class="flex h-16 px-4 py-2 items-center hover:bg-gray-100 hover:shadow-sm">
+					<router-link to="/faceset" exact-active-class="border-b-2 border-sky-500">Face sets</router-link>
+				</nav>
 			</div>
 			<nav class="p-2 mr-16 rounded shadow bg-sky-300">
 				<a class="flex text-base" href="#"> Sign Up</a>

@@ -4,6 +4,9 @@ import PoliticianListView from '@/views/Politician/ListView.vue';
 import PoliticianShowView from '@/views/Politician/ShowView.vue';
 import PoliticianEditView from '@/views/Politician/EditView.vue';
 import PoliticianNewView from '@/views/Politician/NewView.vue';
+import FaceSetView from '@/views/FaceSets/FaceSetView.vue';
+import FaceSetShow from '@/views/Facesets/FaceSetShow.vue';
+import FaceSetEdit from '@/views/Facesets/FaceSetEdit.vue';
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +35,21 @@ const router = createRouter({
 			path: '/politician/new',
 			name: 'politician.new',
 			component: PoliticianNewView,
+		},
+		{
+			path: '/faceset',
+			name: 'faceset.view',
+			component: FaceSetView,
+		},
+		{
+			path: '/faceset/show/:outer_id',
+			name: 'faceset.show',
+			component: FaceSetShow,
+		},
+		{
+			path: '/faceset/edit/:outer_id',
+			name: 'faceset.edit',
+			component: FaceSetEdit,
 		},
 	],
 });

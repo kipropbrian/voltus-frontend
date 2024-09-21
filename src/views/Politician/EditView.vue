@@ -1,10 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useRoute, useRouter } from 'vue-router';
-import { PhotoIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/solid';
-import axios from 'axios';
-const baseUrl = import.meta.env.VITE_API_URL;
+import { PhotoIcon } from '@heroicons/vue/24/solid';
 
 const route = useRoute();
 const peopleStore = usePeopleStore();
