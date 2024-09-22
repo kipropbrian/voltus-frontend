@@ -96,17 +96,14 @@ export const useFaceSetStore = defineStore('faceset_store', {
 			const alertStore = useAlertStore();
 			try {
 				this.isSubmitting = true;
-				const formData = {
-					display_name: this.newFormData.display_name,
-					tags: this.newFormData.tags,
-				};
+
 				// PUT request to update the faceset
-				const response = await axios.put(`${baseUrl}/api/facesets/${outer_id}`, formData);
+				const response = await axios.put(`${baseUrl}/api/faceset/${outer_id}`, this.faceset);
 
 				if (response.status === 200) {
 					this.submitted = true;
 					this.isSubmitting = false;
-					this.clearFormData();
+
 					alertStore.success('Faceset updated successfully');
 					// Optionally fetch the updated list
 					await this.getAllFacesets();
@@ -126,7 +123,7 @@ export const useFaceSetStore = defineStore('faceset_store', {
 			const alertStore = useAlertStore();
 			try {
 				// DELETE request to delete the faceset
-				await axios.delete(`${baseUrl}/api/facesets/${outer_id}`);
+				await axios.delete(`${baseUrl}/api/faceset/${outer_id}`);
 				// Update the list by refetching facesets after deletion
 				await this.getAllFacesets();
 				alertStore.success('Faceset deleted successfully');

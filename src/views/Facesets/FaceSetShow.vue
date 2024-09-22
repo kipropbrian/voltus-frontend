@@ -28,7 +28,7 @@ onMounted(async () => {
 		<div class="w-full lg:w-2/3">
 			<div class="bg-white shadow-md rounded my-2 p-8">
 				<div class="flex justify-between items-center mb-4">
-					<h1 class="text-xl font-bold">Faceset Details</h1>
+					<h3 class="text-base font-semibold leading-7 text-gray-900">Faceset Information</h3>
 					<button @click="goBack" class="bg-gray-500 text-white px-4 py-2 rounded">Back to Facesets</button>
 				</div>
 
@@ -38,44 +38,56 @@ onMounted(async () => {
 
 				<div v-else>
 					<!-- Display Name -->
-					<div class="mb-4">
-						<strong>Display Name:</strong>
-						<p>{{ faceSetStore.faceset.display_name || 'N/A' }}</p>
+					<div class="px-4 sm:px-0">
+						<p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Details of the Faceset.</p>
 					</div>
+					<div class="mt-6 border-t border-gray-100">
+						<dl class="divide-y divide-gray-100">
+							<div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+								<dt class="text-sm font-medium leading-6 text-gray-900">Display Name</dt>
+								<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+									{{ faceSetStore.faceset.display_name || 'N/A' }}
+								</dd>
+							</div>
+							<div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+								<dt class="text-sm font-medium leading-6 text-gray-900">Faceset Token</dt>
+								<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+									{{ faceSetStore.faceset.faceset_token || 'N/A' }}
+								</dd>
+							</div>
+							<div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+								<dt class="text-sm font-medium leading-6 text-gray-900">Outer ID</dt>
+								<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+									{{ faceSetStore.faceset.outer_id || 'N/A' }}
+								</dd>
+							</div>
 
-					<!-- Faceset Token -->
-					<div class="mb-4">
-						<strong>Faceset Token:</strong>
-						<p>{{ faceSetStore.faceset.faceset_token || 'N/A' }}</p>
-					</div>
+							<div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+								<dt class="text-sm font-medium leading-6 text-gray-900">Tags</dt>
+								<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+									{{ faceSetStore.faceset.tags || 'None' }}
+								</dd>
+							</div>
 
-					<!-- Outer ID -->
-					<div class="mb-4">
-						<strong>Outer ID:</strong>
-						<p>{{ faceSetStore.faceset.outer_id || 'N/A' }}</p>
-					</div>
+							<div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+								<dt class="text-sm font-medium leading-6 text-gray-900">User Data</dt>
+								<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+									{{ faceSetStore.faceset.user_data || 'N/A' }}
+								</dd>
+							</div>
 
-					<!-- Tags -->
-					<div class="mb-4">
-						<strong>Tags:</strong>
-						<p>{{ faceSetStore.faceset.tags || 'None' }}</p>
-					</div>
-
-					<!-- User Data -->
-					<div class="mb-4">
-						<strong>User Data:</strong>
-						<p>{{ faceSetStore.faceset.user_data || 'N/A' }}</p>
-					</div>
-
-					<!-- Face Count -->
-					<div class="mb-4">
-						<strong>Face Count:</strong>
-						<p>{{ faceSetStore.faceset.face_count }}</p>
+							<div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+								<dt class="text-sm font-medium leading-6 text-gray-900">Face Count</dt>
+								<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+									{{ faceSetStore.faceset.face_count }}
+								</dd>
+							</div>
+						</dl>
 					</div>
 
 					<!-- Face Tokens -->
-					<div class="mb-4">
-						<strong>Face Tokens:</strong>
+					<div class="my-8">
+						<h3 class="text-base font-semibold leading-7 text-gray-900">Face Tokens</h3>
 						<table class="min-w-max my-2 w-full table-auto">
 							<thead>
 								<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">

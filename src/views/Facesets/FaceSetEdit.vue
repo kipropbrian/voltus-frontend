@@ -20,12 +20,8 @@ const goBack = () => {
 
 // Update the faceset details
 const updateFaceset = async () => {
-	try {
-		await faceSetStore.updateFaceset(outerId, formData.value);
-		router.push({ name: 'faceset.show', params: { outer_id: formData.value.outer_id } });
-	} catch (error) {
-		console.error('Failed to update faceset:', error);
-	}
+	await faceSetStore.updateFaceset(outerId);
+	router.push({ name: 'faceset.show', params: { outer_id: faceSetStore.faceset.outer_id } });
 };
 
 // Delete a face token from the faceset
