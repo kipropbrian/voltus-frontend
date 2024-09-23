@@ -6,11 +6,15 @@ import { PhotoIcon } from '@heroicons/vue/24/solid';
 
 const route = useRoute();
 const peopleStore = usePeopleStore();
+const personId = route.params.id;
 
 onMounted(async () => {
-	const personId = route.params.id;
 	await peopleStore.getPersonById(personId);
 });
+
+const update = async () => {
+	peopleStore.updatePerson(personId);
+};
 
 const router = useRouter();
 
@@ -43,7 +47,7 @@ const goBack = () => {
 			</div>
 
 			<div v-if="peopleStore.person" class="shadow rounded-lg p-4">
-				<form @submit.prevent="peopleStore.updatePerson" class="bg-white p-4 shadow rounded-lg w-4/5">
+				<form @submit.prevent="update" class="bg-white p-4 shadow rounded-lg w-4/5">
 					<div class="divide-y divide-gray-100">
 						<div class="border-b border-gray-900/10 pb-4">
 							<h2 class="text-base font-semibold leading-7 text-gray-900">Profile</h2>
@@ -122,25 +126,51 @@ const goBack = () => {
 							/>
 						</div>
 					</div>
-					<div class="col-span-full">
-						<div
-							class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
+					<figure class="max-w-lg mt-4 flex mx-auto position: relative">
+						<img
+							id="canva1"
+							class="h-auto rounded-lg shadow-lg shadow-gray-800 hover:shadow-sky-200"
+							:src="peopleStore.uploadedInfo.imgurl"
+							alt="user provided image"
+						/>
+						<div v-for="(box, k) in peopleStore.faceStyles" :key="k" :style="box"></div>
+					</figure>
+					<div class="flex items-center justify-center w-full my-2 mb-4">
+						<label
+							for="dropzone-file"
+							class="flex flex-col items-center justify-center w-full h-48 border-2 border-sky-200 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+							@drop="peopleStore.dropHandler"
+							@dragover.prevent=""
 						>
-							<div class="text-center">
-								<PhotoIcon class="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-								<div class="mt-4 flex text-sm leading-6 text-gray-600">
-									<label
-										for="file-upload"
-										class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-									>
-										<span>Upload a file</span>
-										<input id="file-upload" name="file-upload" type="file" class="sr-only" />
-									</label>
-									<p class="pl-1">or drag and drop</p>
-								</div>
-								<p class="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+							<div class="flex flex-col items-center justify-center pt-5 pb-6">
+								<svg
+									aria-hidden="true"
+									class="w-10 h-10 mb-3 text-sky-500"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+									></path>
+								</svg>
+								<p class="mb-2 text-sm text-gray-500">
+									<span class="font-semibold">Click to upload</span> or drag and drop
+								</p>
+								<p class="text-xs text-gray-500">PNG, JPG (MAX. 2MB)</p>
 							</div>
-						</div>
+							<input
+								id="dropzone-file"
+								type="file"
+								class="hidden"
+								@change="peopleStore.uploadHandler"
+								accept="image/png, image/jpeg"
+							/>
+						</label>
 					</div>
 				</form>
 			</div>

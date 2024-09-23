@@ -1,9 +1,6 @@
 <script setup>
-import { storeToRefs } from 'pinia';
 import { useFacePlusStore } from '@/stores/facePlusStore';
 const facePlusStore = useFacePlusStore();
-
-const { facePlusData } = storeToRefs(facePlusStore);
 </script>
 <template>
 	<div class="grid grid-col grid-cols-2 mt-4 gap-2 w-9/12 mx-auto">

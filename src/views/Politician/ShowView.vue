@@ -100,9 +100,9 @@ const goBack = () => {
 							class="flex flex-col items-center"
 						>
 							<img
-								:src="image.image_url_secure"
+								:src="image.transformed_url"
 								alt="person.name"
-								class="object-cover w-full h-48 rounded"
+								class="inline-block h-14 w-14 rounded-full ring-2 ring-white"
 							/>
 							<div class="mt-4 flex justify-start w-full">
 								<div>

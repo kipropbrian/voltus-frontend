@@ -12,6 +12,11 @@ export const usePeopleStore = defineStore('people_store', {
 	state: () => ({
 		people: {},
 		person: {},
+		uploadedInfo: {
+			imgurl: '/blank-person-612x612.jpeg',
+			uploadedImage: null,
+		},
+		faceStyles: {},
 		isSubmitting: false,
 		submitted: false,
 		newFormData: {
@@ -26,6 +31,13 @@ export const usePeopleStore = defineStore('people_store', {
 	actions: {
 		uploadHandler(e) {
 			this.newFormData.file = e.target.files[0];
+			this.uploadedInfo = updateImage(e);
+		},
+		dropHandle(e) {
+			let images = dropHandler(e);
+			if (images !== null) {
+				this.uploadedInfo = images;
+			}
 		},
 		async getAll() {
 			const alertStore = useAlertStore();
@@ -74,6 +86,34 @@ export const usePeopleStore = defineStore('people_store', {
 					this.submitted = true;
 					this.isSubmitting = false;
 					this.clearFormData();
+					alertStore.success(response.data.message);
+				}
+			} catch (error) {
+				this.isSubmitting = false;
+				this.errors = error.response?.data || error.message;
+				alertStore.error(this.errors.error);
+			}
+		},
+		// Add the new createPerson action to create a person record
+		async updatePerson(personId) {
+			const alertStore = useAlertStore();
+			try {
+				this.isSubmitting = true;
+				const formData = new FormData();
+				formData.append('name', this.person.name);
+				formData.append('gender', this.person.gender);
+				formData.append('about', this.person.about);
+				if (this.person.file) {
+					formData.append('image', this.person.file);
+				}
+				// Add this line to override the method
+				formData.append('_method', 'PUT');
+				// Post request to create a new person
+				const response = await axios.post(`${baseUrl}/api/person/${personId}`, formData);
+
+				if (response.status === 201) {
+					this.submitted = true;
+					this.isSubmitting = false;
 					alertStore.success(response.data.message);
 				}
 			} catch (error) {
