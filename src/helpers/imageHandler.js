@@ -66,4 +66,12 @@ const updateImage = (e) => {
 	return { imgurl, uploadedImage };
 };
 
-export { checkSize, updateImage, drawFaceRectangle, dropHandler };
+const getThumbnailUrl = (person) => {
+	if (!person.images) {
+		return person.gender == 'Male' ? '/man-icon.png' : '/woman-icon.png';
+	} else {
+		return person.images[0].transformed_url;
+	}
+};
+
+export { checkSize, updateImage, drawFaceRectangle, dropHandler, getThumbnailUrl };

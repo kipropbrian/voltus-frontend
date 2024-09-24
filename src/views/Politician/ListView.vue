@@ -5,6 +5,7 @@ import { onMounted } from 'vue';
 import { usePeopleStore } from '@/stores/peopleStore';
 import Delete from '../../components/Helpers/Delete.vue';
 import { useRouter } from 'vue-router';
+import { getThumbnailUrl } from '../../helpers/ImageHandler.js';
 
 const router = useRouter();
 const peopleStore = usePeopleStore();
@@ -56,10 +57,7 @@ onMounted(async () => {
 							<td class="py-3 px-6 text-left whitespace-nowrap" @click="goToShowPerson(person.id)">
 								<div class="flex items-center">
 									<div class="mr-2">
-										<img
-											class="w-6 h-6 rounded-full"
-											:src="person.gender == 'Male' ? '/man-icon.png' : 'woman-icon.png'"
-										/>
+										<img class="w-6 h-6 rounded-full" :src="getThumbnailUrl(person)" />
 									</div>
 									<span class="font-medium">{{ person.name }}</span>
 								</div>

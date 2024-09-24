@@ -1,15 +1,39 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useRoute, useRouter } from 'vue-router';
 import { PhotoIcon } from '@heroicons/vue/24/solid';
+import { updateImage, dropHandler } from '@/helpers/imageHandler';
 
 const route = useRoute();
 const peopleStore = usePeopleStore();
 const personId = route.params.id;
 
+const uploadedInfo = ref({
+	imgurl: '/blank-person-612x612.jpeg',
+	uploadedImage: null,
+});
+
+const person = ref(null);
+
+const dropHandle = (e) => {
+	let images = dropHandler(e);
+	if (images !== null) {
+		uploadedInfo.value = images;
+	}
+};
+
+const uploadHandler = (e) => {
+	peopleStore.newFormData.file = e.target.files[0];
+	uploadedInfo.value = updateImage(e);
+};
+
 onMounted(async () => {
-	await peopleStore.getPersonById(personId);
+	person.value = await peopleStore.getPersonById(personId);
+});
+
+const firstImage = computed(() => {
+	return person.value?.images?.length ? person.value.images[0] : null;
 });
 
 const update = async () => {
@@ -55,7 +79,16 @@ const goBack = () => {
 								This information will be displayed publicly so be careful what you share.
 							</p>
 
+							<div class="m-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+								<img
+									v-if="firstImage"
+									:src="firstImage.transformed_url"
+									alt="person.name"
+									class="h-48 w-48 rounded-full"
+								/>
+							</div>
 							<div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+								<!-- Image Display and Delete Section -->
 								<div class="sm:col-span-3">
 									<label for="first-name" class="block text-sm font-medium leading-6 text-gray-900"
 										>Full Names
@@ -112,65 +145,53 @@ const goBack = () => {
 						</div>
 					</div>
 
-					<!-- Image Display and Delete Section -->
-					<div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-						<div
-							v-for="image in peopleStore.person.images"
-							:key="image.id"
-							class="flex flex-col items-center"
-						>
-							<img
-								:src="image.image_url_secure"
-								alt="person.name"
-								class="object-cover w-full h-48 rounded"
-							/>
+					<div class="flex justify-center items-start gap-6">
+						<div class="flex items-center justify-center w-96 my-4 mb-4">
+							<label
+								for="dropzone-file"
+								class="flex flex-col items-center justify-center w-full h-48 border-2 border-sky-200 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+								@drop="dropHandler"
+								@dragover.prevent=""
+							>
+								<div class="flex flex-col items-center justify-center pt-5 pb-6">
+									<svg
+										aria-hidden="true"
+										class="w-10 h-10 mb-3 text-sky-500"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+										></path>
+									</svg>
+									<p class="mb-2 text-sm text-gray-500">
+										<span class="font-semibold">Click to upload</span> or drag and drop
+									</p>
+									<p class="text-xs text-gray-500">PNG, JPG (MAX. 2MB)</p>
+								</div>
+								<input
+									id="dropzone-file"
+									type="file"
+									class="hidden"
+									@change="uploadHandler"
+									accept="image/png, image/jpeg"
+								/>
+							</label>
 						</div>
-					</div>
-					<figure class="max-w-lg mt-4 flex mx-auto position: relative">
-						<img
-							id="canva1"
-							class="h-auto rounded-lg shadow-lg shadow-gray-800 hover:shadow-sky-200"
-							:src="peopleStore.uploadedInfo.imgurl"
-							alt="user provided image"
-						/>
-						<div v-for="(box, k) in peopleStore.faceStyles" :key="k" :style="box"></div>
-					</figure>
-					<div class="flex items-center justify-center w-full my-2 mb-4">
-						<label
-							for="dropzone-file"
-							class="flex flex-col items-center justify-center w-full h-48 border-2 border-sky-200 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-							@drop="peopleStore.dropHandler"
-							@dragover.prevent=""
-						>
-							<div class="flex flex-col items-center justify-center pt-5 pb-6">
-								<svg
-									aria-hidden="true"
-									class="w-10 h-10 mb-3 text-sky-500"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-									></path>
-								</svg>
-								<p class="mb-2 text-sm text-gray-500">
-									<span class="font-semibold">Click to upload</span> or drag and drop
-								</p>
-								<p class="text-xs text-gray-500">PNG, JPG (MAX. 2MB)</p>
-							</div>
-							<input
-								id="dropzone-file"
-								type="file"
-								class="hidden"
-								@change="peopleStore.uploadHandler"
-								accept="image/png, image/jpeg"
+						<figure class="w-96 mt-4 flex mx-auto position: relative">
+							<img
+								id="canva1"
+								class="h-auto rounded-lg shadow-lg shadow-gray-800"
+								:src="uploadedInfo.imgurl"
+								alt="user provided image"
 							/>
-						</label>
+							<div v-for="(box, k) in peopleStore.faceStyles" :key="k" :style="box"></div>
+						</figure>
 					</div>
 				</form>
 			</div>

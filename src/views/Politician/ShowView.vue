@@ -1,9 +1,11 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+
+const person = ref(null);
 
 const peopleStore = usePeopleStore();
 
@@ -13,9 +15,13 @@ const formatDate = (dateString) => {
 	return new Date(dateString).toLocaleDateString('en-US', options);
 };
 
+const firstImage = computed(() => {
+	return person.value?.images?.length ? person.value.images[0] : null;
+});
+
 onMounted(async () => {
 	const personId = route.params.id;
-	await peopleStore.getPersonById(personId);
+	person.value = await peopleStore.getPersonById(personId);
 });
 
 const router = useRouter();
@@ -48,73 +54,37 @@ const goBack = () => {
 				<h1 class="text-2xl font-bold">Person Details</h1>
 			</div>
 
-			<div v-if="peopleStore.person" class="shadow rounded-lg p-4">
-				<div class="bg-white p-4 shadow rounded-lg w-4/5">
-					<dl class="divide-y divide-gray-100">
-						<div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 bg-gray-100">
-							<dt class="text-sm font-medium leading-6 text-gray-900 px-4">Full name</dt>
+			<div v-if="person" class="shadow rounded-lg p-2">
+				<div class="bg-white p-2 shadow rounded-lg w-4/5">
+					<!-- Image Display and Delete Section -->
+					<div class="mx-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+						<img
+							v-if="firstImage"
+							:src="firstImage.transformed_url"
+							alt="person.name"
+							class="h-48 w-48 rounded-full"
+						/>
+					</div>
+					<dl class="divide-y divide-gray-100 mt-4">
+						<div class="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
+							<dt class="text-sm font-medium leading-6 text-gray-900">Full name</dt>
 							<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-								{{ peopleStore.person.name }}
+								{{ person.name }}
 							</dd>
 						</div>
-						<div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-							<dt class="text-sm font-medium leading-6 text-gray-900 px-4">Gender</dt>
+						<div class="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
+							<dt class="text-sm font-medium leading-6 text-gray-900">Gender</dt>
 							<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
 								{{ peopleStore.person.gender }}
 							</dd>
 						</div>
-						<div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 bg-gray-100">
-							<dt class="text-sm font-medium leading-6 text-gray-900 px-4">Details</dt>
+						<div class="px-4 py-6 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-0">
+							<dt class="text-sm font-medium leading-6 text-gray-900">Details</dt>
 							<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-								{{ peopleStore.person.about }}
-							</dd>
-						</div>
-						<div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-							<dt class="text-sm font-medium leading-6 text-gray-900 px-4">UUID</dt>
-							<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-								{{ peopleStore.person.uuid }}
-							</dd>
-						</div>
-						<div class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 bg-gray-100">
-							<dt class="text-sm font-medium leading-6 text-gray-900 px-4">Created at</dt>
-							<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-								{{ formatDate(peopleStore.person.created_at) }}
-							</dd>
-						</div>
-						<div
-							v-if="peopleStore.person.updated_at"
-							class="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-						>
-							<dt class="text-sm font-medium leading-6 text-gray-900 px-4">Created at</dt>
-							<dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-								{{ formatDate(peopleStore.person.updated_at) }}
+								{{ person.about }}
 							</dd>
 						</div>
 					</dl>
-
-					<!-- Image Display and Delete Section -->
-					<div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-						<div
-							v-for="image in peopleStore.person.images"
-							:key="image.id"
-							class="flex flex-col items-center"
-						>
-							<img
-								:src="image.transformed_url"
-								alt="person.name"
-								class="inline-block h-14 w-14 rounded-full ring-2 ring-white"
-							/>
-							<div class="mt-4 flex justify-start w-full">
-								<div>
-									<p class="mt-1 text-sm text-gray-500">Face Token: {{ image.face_token }}</p>
-									<p class="mt-1 text-sm text-gray-500">Detected {{ image.detected }}</p>
-									<p class="mt-1 text-sm text-gray-500">
-										Created at: {{ formatDate(image.created_at) }}
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
 			<!-- </div> -->

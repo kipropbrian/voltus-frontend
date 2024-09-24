@@ -12,10 +12,6 @@ export const usePeopleStore = defineStore('people_store', {
 	state: () => ({
 		people: {},
 		person: {},
-		uploadedInfo: {
-			imgurl: '/blank-person-612x612.jpeg',
-			uploadedImage: null,
-		},
 		faceStyles: {},
 		isSubmitting: false,
 		submitted: false,
@@ -29,16 +25,6 @@ export const usePeopleStore = defineStore('people_store', {
 	}),
 
 	actions: {
-		uploadHandler(e) {
-			this.newFormData.file = e.target.files[0];
-			this.uploadedInfo = updateImage(e);
-		},
-		dropHandle(e) {
-			let images = dropHandler(e);
-			if (images !== null) {
-				this.uploadedInfo = images;
-			}
-		},
 		async getAll() {
 			const alertStore = useAlertStore();
 			try {
