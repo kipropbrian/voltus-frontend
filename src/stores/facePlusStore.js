@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import { useAlertStore } from '@/stores/alertStore';
-import { detectFace, searchFace, processFaces } from '@/helpers/faceplusHandler'; // Import helpers
-import { checkSize, updateImage, drawFaceRectangle, dropHandler } from '@/helpers/imageHandler';
+import { useAlertStore } from '../stores/alertStore';
+import { detectFace, searchFace, processFaces } from '../helpers/faceplusHandler'; // Import helpers
+import { checkSize, updateImage, drawFaceRectangle, dropHandler } from '../helpers/imageHandler';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 

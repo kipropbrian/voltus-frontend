@@ -1,5 +1,5 @@
 <script setup>
-import { usePeopleStore } from '@/stores/peopleStore';
+import { usePeopleStore } from '../../stores/peopleStore';
 import { PhotoIcon } from '@heroicons/vue/24/solid';
 import { useRouter } from 'vue-router';
 

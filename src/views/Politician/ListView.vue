@@ -1,37 +1,55 @@
 <script setup>
-import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-import { onMounted } from 'vue';
-import { usePeopleStore } from '@/stores/peopleStore';
-import Delete from '../../components/Helpers/Delete.vue';
+import {
+	Pagination,
+	PaginationEllipsis,
+	PaginationFirst,
+	PaginationLast,
+	PaginationList,
+	PaginationListItem,
+	PaginationNext,
+	PaginationPrev,
+} from '@/components/ui/pagination';
+import { Button } from '@/components/ui/button';
+
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
+
+import { usePeopleStore } from '../../stores/peopleStore';
 import { getThumbnailUrl } from '../../helpers/ImageHandler.js';
+import Delete from '../../partials/Helpers/Delete.vue';
 
 const router = useRouter();
 const peopleStore = usePeopleStore();
-const { people } = storeToRefs(peopleStore);
+const { people, totalPeople } = storeToRefs(peopleStore);
+
 const isDeleteDialogOpen = ref(false);
 const personToDelete = ref(null);
+const currentPage = ref(1);
+const pageSize = ref(10);
+const totalPages = ref(10);
 
-// Open delete dialog
 const openDeleteDialog = (id) => {
 	personToDelete.value = id;
 	isDeleteDialogOpen.value = true;
 };
 
-// Delete person when confirmed by child
 const deletePerson = (personId) => {
 	peopleStore.deletePerson(personId);
 	isDeleteDialogOpen.value = false;
 };
 
-// Navigate to show route
 const goToShowPerson = (personId) => {
 	router.push({ name: 'politician.show', params: { id: personId } });
 };
 
+const changePage = (page) => {
+	currentPage.value = page;
+	peopleStore.getAll({ page, pageSize }); // Fetch people for the selected page
+};
+
 onMounted(async () => {
-	peopleStore.getAll();
+	peopleStore.getAll({ page: currentPage.value, pageSize });
 });
 </script>
 <template>
@@ -137,7 +155,28 @@ onMounted(async () => {
 			<div v-else>
 				<div class="p-2 text-center text-bold">No records found</div>
 			</div>
+
+			<!-- Pagination Component -->
+			<Pagination v-slot="{ page }" :total="100" :sibling-count="1" show-edges :default-page="1">
+				<PaginationList v-slot="{ items }" class="flex items-center gap-1">
+					<PaginationFirst />
+					<PaginationPrev />
+
+					<template v-for="(item, index) in items">
+						<PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+							<Button class="w-9 h-9 p-0" :variant="item.value === page ? 'default' : 'outline'">
+								{{ item.value }}
+							</Button>
+						</PaginationListItem>
+						<PaginationEllipsis v-else :key="item.type" :index="index" />
+					</template>
+
+					<PaginationNext />
+					<PaginationLast />
+				</PaginationList>
+			</Pagination>
 		</div>
+
 		<!-- Delete Dialog Component -->
 		<Delete
 			v-if="isDeleteDialogOpen"

@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useFaceSetStore } from '@/stores/faceSetStore';
+import { useFaceSetStore } from '../../stores/faceSetStore';
 
 const route = useRoute();
 const router = useRouter();

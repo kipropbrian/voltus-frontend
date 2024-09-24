@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/views/HomeView.vue';
-import PoliticianListView from '@/views/Politician/ListView.vue';
-import PoliticianShowView from '@/views/Politician/ShowView.vue';
-import PoliticianEditView from '@/views/Politician/EditView.vue';
-import PoliticianNewView from '@/views/Politician/NewView.vue';
-import FaceSetView from '@/views/FaceSets/FaceSetView.vue';
-import FaceSetShow from '@/views/Facesets/FaceSetShow.vue';
-import FaceSetEdit from '@/views/Facesets/FaceSetEdit.vue';
+import HomeView from '../views/HomeView.vue';
+import PoliticianListView from '../views/Politician/ListView.vue';
+import PoliticianShowView from '../views/Politician/ShowView.vue';
+import PoliticianEditView from '../views/Politician/EditView.vue';
+import PoliticianNewView from '../views/Politician/NewView.vue';
+import FaceSetView from '../views/Facesets/FaceSetView.vue';
+import FaceSetShow from '../views/Facesets/FaceSetShow.vue';
+import FaceSetEdit from '../views/Facesets/FaceSetEdit.vue';
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),

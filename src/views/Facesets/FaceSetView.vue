@@ -2,8 +2,8 @@
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
-import { useFaceSetStore } from '@/stores/faceSetStore';
-import Delete from '../../components/Helpers/Delete.vue';
+import { useFaceSetStore } from '../../stores/faceSetStore';
+import Delete from '../../partials/Helpers/Delete.vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

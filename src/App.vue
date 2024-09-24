@@ -1,13 +1,13 @@
 <script setup>
-import HeaderNav from '@/components/HeaderNav.vue';
-import BottomFooter from '@/components/BottomFooter.vue';
-import ShowAlertVue from '@/components/ShowAlert.vue';
+import HeaderNav from './partials/HeaderNav.vue';
+import BottomFooter from './partials/BottomFooter.vue';
+import ShowAlertVue from './partials/ShowAlert.vue';
 import { RouterView } from 'vue-router';
 </script>
 
 <template>
 	<HeaderNav />
-	<ShowAlertVue/>
+	<ShowAlertVue />
 	<RouterView />
 	<BottomFooter />
 </template>

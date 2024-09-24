@@ -3,7 +3,7 @@ import { onMounted, ref, computed } from 'vue';
 import { usePeopleStore } from '../../stores/peopleStore';
 import { useRoute, useRouter } from 'vue-router';
 import { PhotoIcon } from '@heroicons/vue/24/solid';
-import { updateImage, dropHandler } from '@/helpers/imageHandler';
+import { updateImage, dropHandler } from '../../helpers/imageHandler';
 
 const route = useRoute();
 const peopleStore = usePeopleStore();

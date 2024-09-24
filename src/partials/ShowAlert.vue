@@ -1,11 +1,10 @@
 <script setup>
-import { useAlertStore } from '@/stores/alertStore';
+import { useAlertStore } from '../stores/alertStore';
 import { storeToRefs } from 'pinia';
 
 const alertStore = useAlertStore();
 
 const { alert } = storeToRefs(alertStore);
-
 </script>
 <template>
 	<div
@@ -54,7 +53,7 @@ const { alert } = storeToRefs(alertStore);
 		</div>
 		<div class="ml-3 text-sm font-normal">{{ alert.message }}</div>
 		<button
-            @click="alertStore.clear()"
+			@click="alertStore.clear()"
 			type="button"
 			class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8"
 			data-dismiss-target="#toast-warning"

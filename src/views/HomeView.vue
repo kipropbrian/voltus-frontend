@@ -1,5 +1,5 @@
 <script setup>
-import { useFacePlusStore } from '@/stores/facePlusStore';
+import { useFacePlusStore } from '../stores/facePlusStore';
 const facePlusStore = useFacePlusStore();
 </script>
 <template>

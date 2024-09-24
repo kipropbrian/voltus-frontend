@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
-import { useAlertStore } from '@/stores/alertStore';
+import { useAlertStore } from '../stores/alertStore';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
