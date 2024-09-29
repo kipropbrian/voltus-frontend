@@ -67,7 +67,7 @@ const updateImage = (e) => {
 };
 
 const getThumbnailUrl = (person) => {
-	if (!person.images) {
+	if (!person.images.length) {
 		return person.gender == 'Male' ? '/man-icon.png' : '/woman-icon.png';
 	} else {
 		return person.images[0].transformed_url;
