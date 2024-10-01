@@ -54,7 +54,7 @@ export function processFaces(searchResults) {
 			email: person ? person.email : null,
 			about: person ? person.about : 'No matching person found',
 			gender: person ? person.gender : null,
-			image_url: person ? person.latest_image.image_url : '/blank-person-612x612.jpeg',
+			image_url: person ? person.latest_image.transformed_url : '/blank-person-612x612.jpeg',
 			confidence: Math.floor(result.confidence),
 			face_rectangle: result.face_rectangle,
 		};

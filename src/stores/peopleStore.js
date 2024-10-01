@@ -14,12 +14,6 @@ export const usePeopleStore = defineStore('people_store', {
 		faceStyles: {},
 		isSubmitting: false,
 		submitted: false,
-		newFormData: {
-			name: '',
-			gender: '',
-			details: '',
-			file: null, // To hold the file input
-		},
 		errors: null,
 	}),
 
@@ -53,28 +47,24 @@ export const usePeopleStore = defineStore('people_store', {
 			}
 		},
 		// Add the new createPerson action to create a person record
-		async createPerson() {
+		async createPerson(formPayload) {
 			const alertStore = useAlertStore();
 			try {
 				this.isSubmitting = true;
 				const formData = new FormData();
-				formData.append('name', this.newFormData.name);
-				formData.append('gender', this.newFormData.gender);
-				formData.append('about', this.newFormData.details);
-				if (this.newFormData.file) {
-					formData.append('image', this.newFormData.file);
+				formData.append('name', formPayload.name);
+				formData.append('gender', formPayload.gender);
+				formData.append('about', formPayload.details);
+				if (formPayload.file) {
+					formData.append('image', formPayload.file);
 				}
 				// Post request to create a new person
 				const response = await axios.post(`${baseUrl}/api/person`, formData);
 
 				if (response.status === 201) {
-					this.submitted = true;
-					this.isSubmitting = false;
-					this.clearFormData();
 					alertStore.success(response.data.message);
 				}
 			} catch (error) {
-				this.isSubmitting = false;
 				this.errors = error.response?.data || error.message;
 				alertStore.error(this.errors.error);
 			}

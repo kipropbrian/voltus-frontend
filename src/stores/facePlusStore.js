@@ -25,9 +25,11 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 
 	actions: {
 		uploadHandler(e) {
+			this.reset();
 			this.uploadedInfo = updateImage(e);
 		},
 		dropHandle(e) {
+			this.reset();
 			let images = dropHandler(e);
 			if (images !== null) {
 				this.uploadedInfo = images;
@@ -92,6 +94,9 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 				alertStore.error(e.message);
 				this.status.loading = false;
 			}
+		},
+		reset() {
+			this.faceStyles = {};
 		},
 	},
 });

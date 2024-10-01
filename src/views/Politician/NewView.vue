@@ -1,10 +1,47 @@
 <script setup>
-import { usePeopleStore } from '../../stores/peopleStore';
-import { PhotoIcon } from '@heroicons/vue/24/solid';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { PhotoIcon } from '@heroicons/vue/24/solid';
+import { usePeopleStore } from '../../stores/peopleStore';
+import { updateImage, dropHandler } from '../../helpers/imageHandler';
 
 const peopleStore = usePeopleStore();
 const router = useRouter();
+
+const uploadedInfo = ref({
+	imgurl: '/blank-person-612x612.jpeg',
+	uploadedImage: null,
+});
+
+const isSubmitting = ref(false);
+const submitted = ref(false);
+const faceStyles = ref({});
+
+const newFormData = ref({
+	name: '',
+	gender: 'male',
+	details: '',
+	file: null,
+});
+
+const dropHandle = (e) => {
+	let images = dropHandler(e);
+	if (images !== null) {
+		uploadedInfo.value = images;
+	}
+};
+
+const uploadHandler = (e) => {
+	newFormData.value.file = e.target.files[0];
+	uploadedInfo.value = updateImage(e);
+};
+
+const create = async () => {
+	isSubmitting.value = true;
+	await peopleStore.createPerson(newFormData.value);
+	isSubmitting.value = false;
+	submitted.value = true;
+};
 
 const goBack = () => {
 	router.back();
@@ -34,11 +71,11 @@ const goBack = () => {
 				<h1 class="text-2xl font-bold">Create New Person</h1>
 			</div>
 
-			<form @submit.prevent="peopleStore.createPerson" class="bg-white p-6 rounded-lg shadow-lg">
+			<form @submit.prevent="create" class="bg-white p-6 rounded-lg shadow-lg">
 				<div class="mb-4">
 					<label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
 					<input
-						v-model="peopleStore.newFormData.name"
+						v-model="newFormData.name"
 						type="text"
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 						placeholder="Enter full name"
@@ -49,7 +86,7 @@ const goBack = () => {
 				<div class="mb-4">
 					<label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
 					<select
-						v-model="peopleStore.newFormData.gender"
+						v-model="newFormData.gender"
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 						required
 					>
@@ -62,7 +99,7 @@ const goBack = () => {
 				<div class="mb-4">
 					<label class="block text-gray-700 text-sm font-bold mb-2">Details</label>
 					<textarea
-						v-model="peopleStore.newFormData.details"
+						v-model="newFormData.details"
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 						placeholder="Enter details"
 						required
@@ -83,7 +120,8 @@ const goBack = () => {
 										name="file-upload"
 										type="file"
 										class="sr-only"
-										@change="peopleStore.uploadHandler"
+										@change="uploadHandler"
+										accept="image/png, image/jpeg"
 									/>
 								</label>
 								<p class="pl-1">or drag and drop</p>
@@ -92,22 +130,25 @@ const goBack = () => {
 						</div>
 					</div>
 				</div>
+				<figure class="w-96 mt-4 flex mx-auto position: relative">
+					<img
+						id="canva1"
+						class="h-auto rounded-lg shadow-lg shadow-gray-800"
+						:src="uploadedInfo.imgurl"
+						alt="user provided image"
+					/>
+					<div v-for="(box, k) in faceStyles" :key="k" :style="box"></div>
+				</figure>
 				<div class="m-4">
 					<button
-						:disabled="peopleStore.isSubmitting || peopleStore.submitted"
+						:disabled="isSubmitting || submitted"
 						:class="{
-							'bg-blue-500 hover:bg-blue-700': !(peopleStore.isSubmitting || peopleStore.submitted),
-							'bg-gray-400 cursor-not-allowed': peopleStore.isSubmitting || peopleStore.submitted,
+							'bg-blue-500 hover:bg-blue-700': !(isSubmitting || submitted),
+							'bg-gray-400 cursor-not-allowed': isSubmitting || submitted,
 						}"
 						class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
 					>
-						{{
-							peopleStore.submitted
-								? 'Created'
-								: peopleStore.isSubmitting
-									? 'Creating ...'
-									: 'Create Person'
-						}}
+						{{ submitted ? 'Created' : isSubmitting ? 'Creating ...' : 'Create Person' }}
 					</button>
 				</div>
 			</form>
