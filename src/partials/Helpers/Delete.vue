@@ -1,24 +1,47 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 
-const open = ref(true);
 const props = defineProps({
-	personId: {
-		type: Number,
+	id: {
+		type: [Number, String],
 		required: true,
+	},
+	title: {
+		type: String,
+		default: 'Confirm Deletion',
+	},
+	message: {
+		type: String,
+		default: 'Are you sure you want to delete this item? This action cannot be undone.',
+	},
+	show: {
+		type: Boolean,
+		default: false,
 	},
 });
 
 const emit = defineEmits(['close', 'confirm-delete']);
 
+const open = ref(props.show);
+
+// Watch for changes in the `show` prop to control dialog visibility
+watch(
+	() => props.show,
+	(newVal) => {
+		open.value = newVal;
+	},
+);
+
 const confirmDelete = () => {
-	emit('confirm-delete', props.personId); // Emit the event to the parent with the personId
+	emit('confirm-delete', props.id);
+	open.value = false;
 };
 
 const closeDialog = () => {
-	emit('close'); // Emit close event to the parent
+	emit('close');
+	open.value = false;
 };
 </script>
 
@@ -60,12 +83,11 @@ const closeDialog = () => {
 									</div>
 									<div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
 										<DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">
-											Confirm Deletion
+											{{ title }}
 										</DialogTitle>
 										<div class="mt-2">
 											<p class="text-sm text-gray-500">
-												Are you sure you want to delete this person? This action cannot be
-												undone.
+												{{ message }}
 											</p>
 										</div>
 									</div>

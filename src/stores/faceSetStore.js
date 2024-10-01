@@ -117,13 +117,13 @@ export const useFaceSetStore = defineStore('faceset_store', {
 
 		/**
 		 * Delete a faceset.
-		 * @param {string} outer_id - The outer_id of the faceset to delete.
+		 * @param {string} faceset_id - The faceset_id of the faceset to delete.
 		 */
-		async deleteFaceset(outer_id) {
+		async deleteFaceset(faceset_id) {
 			const alertStore = useAlertStore();
 			try {
 				// DELETE request to delete the faceset
-				await axios.delete(`${baseUrl}/api/faceset/${outer_id}`);
+				await axios.delete(`${baseUrl}/api/faceset/${faceset_id}`);
 				// Update the list by refetching facesets after deletion
 				await this.getAllFacesets();
 				alertStore.success('Faceset deleted successfully');

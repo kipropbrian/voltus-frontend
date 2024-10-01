@@ -1,7 +1,6 @@
 <script setup>
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useFaceSetStore } from '../../stores/faceSetStore';
 import Delete from '../../partials/Helpers/Delete.vue';
 import { useRouter } from 'vue-router';
@@ -10,17 +9,17 @@ const router = useRouter();
 const faceSetStore = useFaceSetStore();
 const { facesets } = storeToRefs(faceSetStore);
 const isDeleteDialogOpen = ref(false);
-const facesetToDelete = ref(null);
+const itemToDelete = ref(null); // Renamed for generality
 
 // Open delete dialog
-const openDeleteDialog = (outer_id) => {
-	facesetToDelete.value = outer_id;
+const openDeleteDialog = (faceset_token) => {
+	itemToDelete.value = faceset_token;
 	isDeleteDialogOpen.value = true;
 };
 
 // Delete faceset when confirmed by child
-const deleteFaceset = (outer_id) => {
-	faceSetStore.deleteFaceset(outer_id);
+const deleteFaceset = (faceset_token) => {
+	faceSetStore.deleteFaceset(faceset_token);
 	isDeleteDialogOpen.value = false;
 };
 
@@ -37,11 +36,9 @@ onMounted(async () => {
 <template>
 	<div class="flex bg-gray-100 justify-center">
 		<div class="w-full lg:w-2/3">
-			<!-- <routerLink :to="{ name: 'home' }"> -->
 			<button class="mt-2 px-6 py-3 bg-indigo-700 hover:bg-indigo-600 focus:outline-none rounded">
 				<p class="text-sm font-medium leading-none text-white">Add Faceset</p>
 			</button>
-			<!-- </routerLink> -->
 
 			<div v-if="faceSetStore.loading" class="text-center py-10">
 				<p>Loading faceset details...</p>
@@ -56,28 +53,32 @@ onMounted(async () => {
 							<th class="py-3 px-6 text-center">Actions</th>
 						</tr>
 					</thead>
-					<tbody v-for="faceset in facesets" :key="faceset.outer_id" class="text-gray-600 text-sm font-light">
+					<tbody
+						v-for="faceset in facesets"
+						:key="faceset.faceset_token"
+						class="text-gray-600 text-sm font-light"
+					>
 						<tr class="border-b border-gray-200 hover:bg-gray-100">
 							<td
-								class="py-3 px-6 text-left whitespace-nowrap"
-								@click="goToShowFaceset(faceset.outer_id)"
+								class="py-3 px-6 text-left whitespace-nowrap cursor-pointer"
+								@click="goToShowFaceset(faceset.faceset_token)"
 							>
 								<div class="flex items-center">
 									<div class="w-4 mr-2">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth="{1.5}"
-										stroke="currentColor"
-										className="size-6"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z"
-										/>
-									</svg>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth="{1.5}"
+											stroke="currentColor"
+											className="size-6"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z"
+											/>
+										</svg>
 									</div>
 									<span class="font-medium">{{ faceset.display_name }}</span>
 								</div>
@@ -93,7 +94,10 @@ onMounted(async () => {
 								<div class="flex item-center justify-center">
 									<div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
 										<router-link
-											:to="{ name: 'faceset.show', params: { outer_id: faceset.outer_id } }"
+											:to="{
+												name: 'faceset.show',
+												params: { outer_id: faceset.outer_id },
+											}"
 										>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +122,10 @@ onMounted(async () => {
 									</div>
 									<div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
 										<router-link
-											:to="{ name: 'faceset.edit', params: { outer_id: faceset.outer_id } }"
+											:to="{
+												name: 'faceset.edit',
+												params: { outer_id: faceset.outer_id },
+											}"
 										>
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -136,8 +143,8 @@ onMounted(async () => {
 										</router-link>
 									</div>
 									<div
-										@click="openDeleteDialog(faceset.outer_id)"
-										class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
+										@click="openDeleteDialog(faceset.faceset_token)"
+										class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110 cursor-pointer"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +171,10 @@ onMounted(async () => {
 		<!-- Delete Dialog Component -->
 		<Delete
 			v-if="isDeleteDialogOpen"
-			:personId="facesetToDelete"
+			:show="isDeleteDialogOpen"
+			:id="itemToDelete"
+			:title="'Confirm Deletion'"
+			:message="'Are you sure you want to delete this faceset? This action cannot be undone.'"
 			@close="isDeleteDialogOpen = false"
 			@confirm-delete="deleteFaceset"
 		/>
