@@ -9,7 +9,7 @@ const router = useRouter();
 const faceSetStore = useFaceSetStore();
 const { facesets } = storeToRefs(faceSetStore);
 const isDeleteDialogOpen = ref(false);
-const itemToDelete = ref(null); // Renamed for generality
+const itemToDelete = ref(null); 
 
 // Open delete dialog
 const openDeleteDialog = (faceset_token) => {

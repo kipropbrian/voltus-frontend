@@ -12,6 +12,7 @@ export const useFaceSetStore = defineStore('faceset_store', {
 	state: () => ({
 		facesets: [],
 		faceset: {},
+		faces: {},
 		isSubmitting: false,
 		submitted: false,
 		newFormData: {
@@ -49,7 +50,9 @@ export const useFaceSetStore = defineStore('faceset_store', {
 			this.loading = true;
 			try {
 				const response = await axios.get(`${baseUrl}/api/faceset/${outer_id}`);
-				this.faceset = response.data.faceset || response.data;
+				this.faceset = response.data.faceset;
+				this.faces = response.data.faces;
+
 				this.loading = false;
 			} catch (error) {
 				this.loading = false;
@@ -127,6 +130,23 @@ export const useFaceSetStore = defineStore('faceset_store', {
 				// Update the list by refetching facesets after deletion
 				await this.getAllFacesets();
 				alertStore.success('Faceset deleted successfully');
+			} catch (error) {
+				alertStore.error('There was an issue deleting the faceset.', error.message);
+			}
+		},
+
+		/**
+		 * Delete all faces from faceset.
+		 * @param {string} faceset_id - The faceset_id of the faceset to delete.
+		 */
+		async deleteFaceset(faceset_id) {
+			const alertStore = useAlertStore();
+			try {
+				// DELETE request to delete the faceset
+				await axios.delete(`${baseUrl}/api/faceset/${faceset_id}/remove-all-faces`);
+				// Update the list by refetching facesets after deletion
+				this.faceset = {};
+				alertStore.success('All Faces deleted successfully');
 			} catch (error) {
 				alertStore.error('There was an issue deleting the faceset.', error.message);
 			}
