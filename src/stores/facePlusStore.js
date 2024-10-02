@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { useAlertStore } from '../stores/alertStore';
-import { detectFace, searchFace, processFaces } from '../helpers/faceplusHandler'; // Import helpers
+import { detectFace, searchFace, processFaces, addFaceToFaceset } from '../helpers/faceplusHandler'; // Import helpers
 import { checkSize, updateImage, drawFaceRectangle, dropHandler } from '../helpers/imageHandler';
 
 const baseUrl = import.meta.env.VITE_API_URL;
@@ -93,6 +93,21 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			} catch (e) {
 				alertStore.error(e.message);
 				this.status.loading = false;
+			}
+		},
+		/**
+		 * Add face(s) to a faceset.
+		 * @param {string} outer_id - The outer_id of the faceset.
+		 * @param {string} face_token - Comma-separated face tokens.
+		 */
+		async handleAddFace(face_token, personId) {
+			const alertStore = useAlertStore();
+			try {
+				const response = await addFaceToFaceset(face_token, personId, baseUrl);
+				alertStore.success('Face added successfully:', response);
+			} catch (error) {
+				console.log(error);
+				alertStore.error('Failed to add face:');
 			}
 		},
 		reset() {

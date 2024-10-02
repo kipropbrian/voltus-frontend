@@ -40,6 +40,26 @@ export async function searchFace(faceToken, faceSetToken, baseUrl) {
 }
 
 /**
+ * Add a detected face to a FaceSet.
+ *
+ * @param {string} faceToken - The token of the detected face.
+ * @param {string} personId - The ID of the person to associate with the face.
+ * @param {string} baseUrl - The base API URL.
+ * @returns {Object} The response data from the FaceSet addition API.
+ */
+export async function addFaceToFaceset(faceToken, personId, baseUrl) {
+	try {
+		const response = await axios.post(`${baseUrl}/api/faceset/sync-face`, {
+			face_token: faceToken,
+			personId,
+		});
+		return response.data;
+	} catch (error) {
+		throw error; // Re-throw the error so the caller can handle it
+	}
+}
+
+/**
  * Processes the detected faces and matches them with known persons or marks them as unknown.
  * Maps face data and search results into a simplified structure for easier frontend handling.
  * @param {Array} searchResults - Array of search results from the backend response.
@@ -58,6 +78,7 @@ export function processFaces(searchResults) {
 			image_url: person ? person.latest_image.transformed_url : '/blank-person-612x612.jpeg',
 			confidence: result.confidence ? Math.floor(result.confidence) : null,
 			face_rectangle: result.face_rectangle,
+			personId: person ? person.id : null,
 		};
 	});
 }
