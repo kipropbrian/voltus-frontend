@@ -47,7 +47,8 @@ export async function searchFace(faceToken, faceSetToken, baseUrl) {
  */
 export function processFaces(searchResults) {
 	return searchResults.map((result) => {
-		const person = result.person_data.length ? result.person_data[0] : null;
+		const person = result.person_data && result.person_data.length ? result.person_data[0] : null;
+
 		return {
 			face_token: result.face_token,
 			name: person ? person.name : 'Unknown',
@@ -55,7 +56,7 @@ export function processFaces(searchResults) {
 			about: person ? person.about : 'No matching person found',
 			gender: person ? person.gender : null,
 			image_url: person ? person.latest_image.transformed_url : '/blank-person-612x612.jpeg',
-			confidence: Math.floor(result.confidence),
+			confidence: result.confidence ? Math.floor(result.confidence) : null,
 			face_rectangle: result.face_rectangle,
 		};
 	});

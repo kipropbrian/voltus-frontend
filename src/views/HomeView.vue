@@ -3,12 +3,12 @@ import { useFacePlusStore } from '../stores/facePlusStore';
 const facePlusStore = useFacePlusStore();
 </script>
 <template>
-	<div class="grid grid-col grid-cols-2 mt-4 gap-2 w-9/12 mx-auto">
-		<div class="rounded-lg p-4 shadow-md bg-gray-100">
+	<div class="grid grid-col grid-cols-5 mt-4 gap-2 w-9/12 mx-auto">
+		<div class="col-span-3 rounded-lg p-4 shadow-md bg-gray-100">
 			<div class="flex items-center justify-center w-full my-2 mb-4">
 				<label
 					for="dropzone-file"
-					class="flex flex-col items-center justify-center w-full h-48 border-2 border-sky-200 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+					class="flex flex-col items-center justify-center w-full h-36 border-2 border-sky-200 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
 					@drop="facePlusStore.dropHandler"
 					@dragover.prevent=""
 				>
@@ -101,7 +101,7 @@ const facePlusStore = useFacePlusStore();
 		</div>
 
 		<!-- Display detected face data -->
-		<div class="rounded px-2 border-1 shadow-md bg-gray-100">
+		<div class="col-span-2 rounded px-2 border-1 shadow-md bg-gray-100">
 			<div class="bg-gray-200 mt-2 p-2 flex justify-center rounded-t-md">
 				<h2 class="text-2xl text-stone-500 font-semibold">Faces Detected</h2>
 			</div>
@@ -119,7 +119,7 @@ const facePlusStore = useFacePlusStore();
 				<div class="ml-2 m-2">
 					<p class="font-medium">{{ face.name }}</p>
 					<p class="font-light text-slate-400">{{ face.about }}</p>
-					<p v-if="face.confidence !== null" class="font-light text-slate-400">
+					<p v-if="face.confidence" class="font-light text-slate-400">
 						Confidence: {{ face.confidence }}%
 					</p>
 				</div>

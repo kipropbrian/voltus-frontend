@@ -31,7 +31,7 @@ const drawFaceRectangle = (faceData) => {
 		let name = 'face'.concat(k + 1);
 		faceStyle[name] = {
 			position: 'absolute',
-			border: '1px solid skyblue',
+			border: face.person_data === null ? '1px solid red' : '1px solid skyblue', // Change border color based on person_id
 			'z-index': '1',
 			// transform: rotateZ(6.97501deg);
 			width: face.face_rectangle.width * widthPercentage + 'px',
