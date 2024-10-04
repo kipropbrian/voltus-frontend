@@ -12,17 +12,27 @@ const outerId = route.params.outer_id;
 
 const isDeleteDialogOpen = ref(false);
 const itemToDelete = ref(null);
+const deleteType = ref(''); // Can be 'all' or 'single'
 
-// Open delete dialog
-const openDeleteDialog = (faceset_token) => {
+// Open delete dialog (for both all faces and single face token)
+const openDeleteDialog = (faceset_token, type) => {
 	itemToDelete.value = faceset_token;
+	deleteType.value = type; // Set the type of deletion (all or single)
 	isDeleteDialogOpen.value = true;
 };
 
-// Delete faceset when confirmed by child
-const deleteFaces = (faceset_token) => {
-	faceSetStore.deleteFaceset(faceset_token);
+// Delete all face tokens when confirmed
+const deleteAllFaces = async (faceset_token) => {
+	await faceSetStore.deleteFaceset(faceset_token);
 	isDeleteDialogOpen.value = false;
+	deleteType.value = '';
+};
+
+// Delete a single face token when confirmed
+const deleteSingleFaceToken = async (token) => {
+	await faceSetStore.removeFaceFromFaceset(outerId, token);
+	isDeleteDialogOpen.value = false;
+	deleteType.value = '';
 };
 
 // Load the faceset on mount and populate the form data
@@ -41,15 +51,9 @@ const updateFaceset = async () => {
 	router.push({ name: 'faceset.show', params: { outer_id: faceSetStore.faceset.outer_id } });
 };
 
-// Delete a face token from the faceset
-const removeFaceToken = async (token) => {
-	try {
-		await faceSetStore.removeFaceFromFaceset(formData.value.outer_id, token);
-		// Remove the token from local formData after successful deletion
-		formData.value.face_tokens = formData.value.face_tokens.filter((t) => t !== token);
-	} catch (error) {
-		console.error('Failed to remove face token:', error);
-	}
+// Remove a single face token
+const removeFaceToken = (token) => {
+	openDeleteDialog(token, 'single'); // Open the dialog for a single token deletion
 };
 </script>
 
@@ -143,7 +147,6 @@ const removeFaceToken = async (token) => {
 									<td class="py-3 px-6 text-left">
 										<div v-if="face.person">
 											<p>{{ face.person.name }}</p>
-											<!-- Add more person details as needed -->
 										</div>
 										<div v-else>
 											<p>N/A</p>
@@ -164,7 +167,7 @@ const removeFaceToken = async (token) => {
 									<td class="py-3 px-6 text-center">
 										<div class="flex item-center justify-center">
 											<div
-												@click="removeFaceToken(token)"
+												@click="removeFaceToken(face.face_token)"
 												class="w-4 mr-2 transform hover:text-red-500 hover:scale-110 cursor-pointer"
 											>
 												<svg
@@ -193,7 +196,7 @@ const removeFaceToken = async (token) => {
 							Save Changes
 						</button>
 						<button
-							@click="openDeleteDialog(faceSetStore.faceset.faceset_token)"
+							@click="openDeleteDialog(faceSetStore.faceset.faceset_token, 'all')"
 							class="bg-red-500 text-white px-4 mx-4 py-2 rounded"
 						>
 							Delete All Faces
@@ -208,9 +211,18 @@ const removeFaceToken = async (token) => {
 			:show="isDeleteDialogOpen"
 			:id="itemToDelete"
 			:title="'Confirm Deletion'"
-			:message="'Are you sure you want to all faces from this faceset? This action cannot be undone.'"
+			:message="
+				deleteType === 'all'
+					? 'Are you sure you want to delete all faces?'
+					: 'Are you sure you want to delete this face?'
+			"
 			@close="isDeleteDialogOpen = false"
-			@confirm-delete="deleteFaces"
+			@confirm-delete="
+				() =>
+					deleteType === 'all'
+						? deleteAllFaces(itemToDelete)
+						: deleteSingleFaceToken(itemToDelete)
+			"
 		/>
 	</div>
 </template>

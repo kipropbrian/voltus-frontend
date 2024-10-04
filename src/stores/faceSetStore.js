@@ -184,17 +184,17 @@ export const useFaceSetStore = defineStore('faceset_store', {
 			const alertStore = useAlertStore();
 			try {
 				const formData = {
-					face_tokens: face_tokens, // Should be a comma-separated string
+					face_token: face_tokens, // Should be a comma-separated string
 				};
-				const response = await axios.post(`${baseUrl}/api/facesets/${outer_id}/remove-face`, formData);
+				const response = await axios.post(`${baseUrl}/api/faceset/${outer_id}/remove-face`, formData);
 
 				if (response.status === 200) {
-					alertStore.success('Face(s) removed from faceset successfully');
+					alertStore.success('Face removed from faceset successfully');
 					// Optionally fetch the updated faceset details
 					await this.getFacesetByOuterId(outer_id);
 				}
 			} catch (error) {
-				alertStore.error('There was an issue removing face(s) from the faceset.', error.message);
+				alertStore.error('There was an issue removing face from the faceset.', error.message);
 			}
 		},
 

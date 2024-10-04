@@ -86,21 +86,53 @@ onMounted(async () => {
 					</div>
 
 					<!-- Face Tokens -->
-					<div class="my-8">
-						<h3 class="text-base font-semibold leading-7 text-gray-900">Face Tokens</h3>
-						<table class="min-w-max my-2 w-full table-auto">
+					<div class="mb-4">
+						<label class="block font-medium mb-1">Face Tokens</label>
+						<!-- If there are no face tokens, show 'No items found' -->
+						<div
+							v-if="!faceSetStore.faceset.face_tokens || !faceSetStore.faceset.face_tokens.length"
+							class="text-center text-gray-500"
+						>
+							No items found.
+						</div>
+
+						<!-- If there are face tokens, display them in the table -->
+						<table v-else class="min-w-max w-full table-auto">
 							<thead>
 								<tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
 									<th class="py-3 px-6 text-left">Token</th>
+									<th class="py-3 px-6 text-left">Person</th>
+									<th class="py-3 px-6 text-left">Image</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr
-									v-for="(token, index) in faceSetStore.faceset.face_tokens"
+									v-for="(face, index) in faceSetStore.faces"
 									:key="index"
 									class="border-b border-gray-200 hover:bg-gray-100"
 								>
-									<td class="py-3 px-6 text-left">{{ token }}</td>
+									<td class="py-3 px-6 text-left">{{ face.face_token }}</td>
+									<td class="py-3 px-6 text-left">
+										<div v-if="face.person">
+											<p>{{ face.person.name }}</p>
+											<!-- Add more person details as needed -->
+										</div>
+										<div v-else>
+											<p>N/A</p>
+										</div>
+									</td>
+									<td class="py-3 px-6 text-left">
+										<div v-if="face.image">
+											<img
+												:src="face.image.url"
+												alt="Image"
+												class="h-12 w-12 object-cover rounded"
+											/>
+										</div>
+										<div v-else>
+											<p>N/A</p>
+										</div>
+									</td>
 								</tr>
 							</tbody>
 						</table>
