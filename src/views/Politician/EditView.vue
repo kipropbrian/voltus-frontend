@@ -14,7 +14,16 @@ const uploadedInfo = ref({
 	uploadedImage: null,
 });
 
-const person = ref(null);
+const person = ref({});
+const isSubmitting = ref(false);
+const submitted = ref(false);
+
+const editFormData = ref({
+	name: '',
+	gender: 'male',
+	about: '',
+	file: null,
+});
 
 const dropHandle = (e) => {
 	let images = dropHandler(e);
@@ -24,12 +33,18 @@ const dropHandle = (e) => {
 };
 
 const uploadHandler = (e) => {
-	peopleStore.newFormData.file = e.target.files[0];
+	editFormData.value.file = e.target.files[0];
 	uploadedInfo.value = updateImage(e);
 };
 
 onMounted(async () => {
 	person.value = await peopleStore.getPersonById(personId);
+	if (person.value) {
+		// Populate editFormData with fetched person data
+		editFormData.value.name = person.value.name || '';
+		editFormData.value.gender = person.value.gender || 'male';
+		editFormData.value.about = person.value.about || '';
+	}
 });
 
 const firstImage = computed(() => {
@@ -37,7 +52,10 @@ const firstImage = computed(() => {
 });
 
 const update = async () => {
-	peopleStore.updatePerson(personId);
+	isSubmitting.value = true;
+	await peopleStore.updatePerson(personId, editFormData.value);
+	isSubmitting.value = false;
+	submitted.value = true;
 };
 
 const router = useRouter();
@@ -70,7 +88,7 @@ const goBack = () => {
 				<h1 class="text-2xl font-bold">Edit Person</h1>
 			</div>
 
-			<div v-if="peopleStore.person" class="shadow rounded-lg p-4">
+			<div v-if="person" class="shadow rounded-lg p-4">
 				<form @submit.prevent="update" class="bg-white p-4 shadow rounded-lg w-4/5">
 					<div class="divide-y divide-gray-100">
 						<div class="border-b border-gray-900/10 pb-4">
@@ -98,7 +116,7 @@ const goBack = () => {
 											type="text"
 											name="name"
 											id="name"
-											v-model="peopleStore.person.name"
+											v-model="editFormData.name"
 											class="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 										/>
 									</div>
@@ -110,7 +128,7 @@ const goBack = () => {
 									<div class="mt-2">
 										<select
 											id="gender"
-											v-model="peopleStore.person.gender"
+											v-model="editFormData.gender"
 											name="gender"
 											class="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
 										>
@@ -127,7 +145,7 @@ const goBack = () => {
 										<textarea
 											id="about"
 											name="about"
-											v-model="peopleStore.person.about"
+											v-model="editFormData.about"
 											rows="3"
 											class="block w-2/3 px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 										></textarea>
@@ -136,10 +154,14 @@ const goBack = () => {
 							</div>
 							<div class="flex justify-start mt-4">
 								<button
-									type="submit"
-									class="px-4 py-2 mt-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+									:disabled="isSubmitting || submitted"
+									:class="{
+										'bg-blue-500 hover:bg-blue-700': !(isSubmitting || submitted),
+										'bg-gray-400 cursor-not-allowed': isSubmitting || submitted,
+									}"
+									class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
 								>
-									Save Changes
+									{{ submitted ? 'Updated' : isSubmitting ? 'Updating ...' : 'Update Person' }}
 								</button>
 							</div>
 						</div>

@@ -70,25 +70,23 @@ export const usePeopleStore = defineStore('people_store', {
 			}
 		},
 		// Add the new createPerson action to create a person record
-		async updatePerson(personId) {
+		async updatePerson(personId, personData) {
 			const alertStore = useAlertStore();
 			try {
-				this.isSubmitting = true;
-				const formData = new FormData();
-				formData.append('name', this.person.name);
-				formData.append('gender', this.person.gender);
-				formData.append('about', this.person.about);
-				if (this.person.file) {
-					formData.append('image', this.person.file);
-				}
 				// Add this line to override the method
-				formData.append('_method', 'PUT');
+				const editFormaData = new FormData();
+				editFormaData.append('_method', 'PUT');
+
+				editFormaData.append('name', personData.name);
+				editFormaData.append('gender', personData.gender);
+				editFormaData.append('about', personData.about);
+				if (personData.file) {
+					editFormaData.append('image', personData.file);
+				}
 				// Post request to create a new person
-				const response = await axios.post(`${baseUrl}/api/person/${personId}`, formData);
+				const response = await axios.post(`${baseUrl}/api/person/${personId}`, editFormaData);
 
 				if (response.status === 201) {
-					this.submitted = true;
-					this.isSubmitting = false;
 					alertStore.success(response.data.message);
 				}
 			} catch (error) {
