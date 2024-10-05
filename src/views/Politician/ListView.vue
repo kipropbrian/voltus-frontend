@@ -16,7 +16,7 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { usePeopleStore } from '../../stores/peopleStore';
-import { getThumbnailUrl } from '../../helpers/ImageHandler.js';
+import { getThumbnailUrl } from '../../helpers/imageHandler.js';
 import Delete from '../../partials/Helpers/Delete.vue';
 
 const router = useRouter();

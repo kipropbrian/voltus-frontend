@@ -106,7 +106,6 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 				const response = await addFaceToFaceset(face_token, personId, baseUrl);
 				alertStore.success('Face added successfully:', response);
 			} catch (error) {
-				console.log(error);
 				alertStore.error('Failed to add face:');
 			}
 		},
