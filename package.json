@@ -18,6 +18,7 @@
     "clsx": "^2.1.1",
     "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^4.0.1",
+    "posthog-js": "^1.166.1",
     "radix-vue": "^1.9.6",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
