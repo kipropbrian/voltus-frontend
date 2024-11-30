@@ -13,9 +13,11 @@
     "@heroicons/vue": "^2.1.5",
     "@mediapipe/drawing_utils": "^0.3.1675466124",
     "@radix-icons/vue": "^1.0.0",
+    "@vueuse/core": "^12.0.0",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "lucide-vue-next": "^0.462.0",
     "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^4.0.1",
     "posthog-js": "^1.166.1",
@@ -35,7 +37,7 @@
     "eslint-plugin-vue": "^9.28.0",
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
-    "tailwindcss": "^3.4.11",
+    "tailwindcss": "^3.4.15",
     "vite": "^5.4.5",
     "vite-plugin-vue-devtools": "^7.4.5"
   }

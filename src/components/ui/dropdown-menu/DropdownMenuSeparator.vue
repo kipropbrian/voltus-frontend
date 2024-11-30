@@ -1,8 +1,7 @@
 <script setup>
-import { computed } from "vue";
-import { PaginationEllipsis } from "radix-vue";
-import { DotsHorizontalIcon } from "@radix-icons/vue";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { DropdownMenuSeparator } from 'radix-vue';
+import { computed } from 'vue';
 
 const props = defineProps({
   asChild: { type: Boolean, required: false },
@@ -18,12 +17,8 @@ const delegatedProps = computed(() => {
 </script>
 
 <template>
-  <PaginationEllipsis
+  <DropdownMenuSeparator
     v-bind="delegatedProps"
-    :class="cn('w-9 h-9 flex items-center justify-center', props.class)"
-  >
-    <slot>
-      <DotsHorizontalIcon />
-    </slot>
-  </PaginationEllipsis>
+    :class="cn('-mx-1 my-1 h-px bg-muted', props.class)"
+  />
 </template>

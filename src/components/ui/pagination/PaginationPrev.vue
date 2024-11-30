@@ -1,9 +1,9 @@
 <script setup>
-import { computed } from "vue";
-import { PaginationPrev } from "radix-vue";
-import { ChevronLeftIcon } from "@radix-icons/vue";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { ChevronLeftIcon } from '@radix-icons/vue';
+import { PaginationPrev } from 'radix-vue';
+import { computed } from 'vue';
 
 const props = defineProps({
   asChild: { type: Boolean, required: false, default: true },

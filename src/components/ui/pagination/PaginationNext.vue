@@ -1,9 +1,9 @@
 <script setup>
-import { computed } from "vue";
-import { PaginationLast } from "radix-vue";
-import { DoubleArrowRightIcon } from "@radix-icons/vue";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { ChevronRightIcon } from '@radix-icons/vue';
+import { PaginationNext } from 'radix-vue';
+import { computed } from 'vue';
 
 const props = defineProps({
   asChild: { type: Boolean, required: false, default: true },
@@ -19,11 +19,11 @@ const delegatedProps = computed(() => {
 </script>
 
 <template>
-  <PaginationLast v-bind="delegatedProps">
+  <PaginationNext v-bind="delegatedProps">
     <Button :class="cn('w-9 h-9 p-0', props.class)" variant="outline">
       <slot>
-        <DoubleArrowRightIcon />
+        <ChevronRightIcon />
       </slot>
     </Button>
-  </PaginationLast>
+  </PaginationNext>
 </template>
