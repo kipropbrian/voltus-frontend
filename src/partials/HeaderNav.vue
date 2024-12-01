@@ -1,28 +1,79 @@
-<script setup></script>
+<script setup lang="ts">
+import { Button } from '@/components/ui/button';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { CircleUser, Menu, Package2, Search, Brain } from 'lucide-vue-next';
+</script>
+
 <template>
-	<header>
-		<div class="flex p-2 h-24 shadow-lg items-center w-full text-black justify-between">
-			<div class="flex justify-between items-center px-4 space-x-8 sm:-my-px sm:ml-10 sm:flex">
-				<div class="flex shrink-0">
-					<router-link to="/">
-						<img class="w-20 h-20" src="/facevector.webp" alt="face mesh" />
-					</router-link>
-				</div>
-				<nav class="flex h-16 px-4 py-2 items-center hover:bg-gray-100 hover:shadow-sm">
-					<router-link to="/" exact-active-class="border-b-2 border-sky-500">Dashboard</router-link>
-				</nav>
-				<nav class="flex h-16 px-4 py-2 items-center hover:bg-gray-100 hover:shadow-sm">
-					<router-link to="/politicians" exact-active-class="border-b-2 border-sky-500"
-						>Politicians</router-link
-					>
-				</nav>
-				<nav class="flex h-16 px-4 py-2 items-center hover:bg-gray-100 hover:shadow-sm">
-					<router-link to="/faceset" exact-active-class="border-b-2 border-sky-500">Face sets</router-link>
-				</nav>
+	<header class="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-14">
+		<nav
+			class="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6"
+		>
+			<div class="flex shrink-0">
+				<router-link to="/">
+					<img class="w-8 h-8" src="/facevector.webp" alt="face mesh" />
+				</router-link>
 			</div>
-			<nav class="p-2 mr-16 rounded shadow bg-sky-300">
-				<a class="flex text-base" href="#"> Sign Up</a>
-			</nav>
+			<router-link to="/" exact-active-class="border-b-2 border-sky-500">Home</router-link>
+			<router-link to="/politicians" exact-active-class="border-b-2 border-sky-500">Politicians</router-link>
+			<router-link to="/faceset" exact-active-class="border-b-2 border-sky-500" class="whitespace-nowrap"
+				>Face sets</router-link
+			>
+			<a href="#" class="transition-colors hover:text-foreground"> Crime </a>
+		</nav>
+		<Sheet>
+			<SheetTrigger as-child>
+				<Button variant="outline" size="icon" class="shrink-0 md:hidden">
+					<Menu class="h-5 w-5" />
+					<span class="sr-only">Toggle navigation menu</span>
+				</Button>
+			</SheetTrigger>
+			<SheetContent side="left">
+				<nav class="grid gap-6 text-lg font-medium">
+					<div class="flex shrink-0">
+						<router-link to="/">
+							<img class="w-8 h-8" src="/facevector.webp" alt="face mesh" />
+						</router-link>
+					</div>
+					<router-link to="/" exact-active-class="border-b-2 border-sky-500">Home</router-link>
+					<a href="#" class="text-muted-foreground hover:text-foreground"> Politicians </a>
+					<a href="#" class="text-muted-foreground hover:text-foreground"> Faces </a>
+					<a href="#" class="text-muted-foreground hover:text-foreground"> Crime </a>
+				</nav>
+			</SheetContent>
+		</Sheet>
+		<div class="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+			<form class="ml-auto flex-1 sm:flex-initial">
+				<div class="relative">
+					<Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+					<Input type="search" placeholder="Search ..." class="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]" />
+				</div>
+			</form>
+			<DropdownMenu>
+				<DropdownMenuTrigger as-child>
+					<Button variant="secondary" size="icon" class="rounded-full">
+						<CircleUser class="h-5 w-5" />
+						<span class="sr-only">Toggle user menu</span>
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="end">
+					<DropdownMenuLabel>My Account</DropdownMenuLabel>
+					<DropdownMenuSeparator />
+					<DropdownMenuItem>Settings</DropdownMenuItem>
+					<DropdownMenuItem>Support</DropdownMenuItem>
+					<DropdownMenuSeparator />
+					<DropdownMenuItem>Logout</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
 		</div>
 	</header>
 </template>
