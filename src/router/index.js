@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import HomeView from '../views/HomeView2.vue';
 import PoliticianListView from '../views/Politician/ListView.vue';
 import PoliticianShowView from '../views/Politician/ShowView.vue';
 import PoliticianEditView from '../views/Politician/EditView.vue';
