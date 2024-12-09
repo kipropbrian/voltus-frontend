@@ -98,28 +98,28 @@ onMounted(async () => {
 			class="mt-4 shadow-md rounded w-full bg-white"
 			tableStyle="min-width: 50rem"
 		>
-		<template #header>
-			<div class="flex items-center justify-between p-2">
-				<div>
-					<router-link :to="{ name: 'politician.new' }">
-						<Button size="sm" class="h-7 gap-1">
-							<PlusCircle class="h-3.5 w-3.5" />
-							<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Add Person </span>
-						</Button>
-					</router-link>
+			<template #header>
+				<div class="flex items-center justify-between p-2">
+					<div>
+						<router-link :to="{ name: 'politician.new' }">
+							<Button size="sm" class="h-7 gap-1">
+								<PlusCircle class="h-3.5 w-3.5" />
+								<span class="sr-only sm:not-sr-only sm:whitespace-nowrap"> Add Person </span>
+							</Button>
+						</router-link>
+					</div>
+					<div class="flex items-center">
+						<span class="p-input-icon-left">
+							<i class="pi pi-search"></i>
+							<InputText
+								:value="filters['global'].value"
+								@input="onGlobalFilterChange"
+								placeholder="Search"
+							/>
+						</span>
+					</div>
 				</div>
-				<div class="flex items-center">
-					<span class="p-input-icon-left">
-						<i class="pi pi-search"></i>
-						<InputText
-							:value="filters['global'].value"
-							@input="onGlobalFilterChange"
-							placeholder="Search"
-						/>
-					</span>
-				</div>
-			</div>
-		</template>
+			</template>
 
 			<!-- Name Column -->
 			<Column header="Name" style="width: 30%">
@@ -144,8 +144,13 @@ onMounted(async () => {
 					</template>
 					<template v-else>
 						<span
-							class="bg-purple-200 text-purple-600 py-1 px-3 rounded-full text-xs cursor-pointer"
 							@click="goToShowPerson(data.id)"
+							class="py-1 px-3 rounded text-xs cursor-pointer"
+							:class="{
+								'bg-blue-400 text-blue-800': data?.gender === 'male',
+								'bg-pink-200 text-pink-600': data?.gender === 'female',
+								'bg-green-200 text-green-600': data?.gender !== 'male' && data?.gender !== 'female',
+							}"
 						>
 							{{ data?.gender }}
 						</span>

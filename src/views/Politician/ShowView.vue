@@ -32,8 +32,7 @@ const goBack = () => {
 </script>
 
 <template>
-	<div class="flex bg-gray-100 justify-center m-2">
-		<div class="w-full bg-white lg:w-2/3">
+	<main class="container mx-auto px-4 py-8 md:px-6">
 			<div class="flex items-center m-4">
 				<!-- Back Button -->
 				<button
@@ -91,8 +90,7 @@ const goBack = () => {
 			<div v-else>
 				<p>Loading person details...</p>
 			</div>
-		</div>
-	</div>
+	</main>
 </template>
 
 <style scoped>
