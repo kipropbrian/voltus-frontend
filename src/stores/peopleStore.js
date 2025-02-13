@@ -9,21 +9,27 @@ const baseUrl = import.meta.env.VITE_API_URL;
  */
 export const usePeopleStore = defineStore('people_store', {
 	state: () => ({
-		people: {},
+		people: [],
 		person: {},
 		faceStyles: {},
 		isSubmitting: false,
 		submitted: false,
 		errors: null,
+		totalPeople: 0,
 	}),
 
 	actions: {
-		async getAll() {
+		async getAll({ page = 1, pageSize = 10, search = null }) {
 			const alertStore = useAlertStore();
 			try {
-				//move to helper
-				const resp = await axios.get(`${baseUrl}/api/person`);
+				const params = {
+					page,
+					pageSize,
+					search,
+				};
+				const resp = await axios.get(`${baseUrl}/api/person`, { params });
 				this.people = resp.data.people;
+				this.totalPeople = resp.data.total;
 			} catch (error) {
 				alertStore.error('There was an issue with the request.', error.message);
 			}

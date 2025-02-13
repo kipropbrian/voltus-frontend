@@ -57,7 +57,11 @@ const goToShowPerson = (personId) => {
 
 const fetchPeople = async () => {
 	loading.value = true;
-	await peopleStore.getAll({ page: currentPage.value, pageSize: rows.value, search: filters.value.global.value });
+	await peopleStore.getAll({
+		page: currentPage.value,
+		pageSize: rows.value,
+		search: filters.value.global.value,
+	});
 	loading.value = false;
 };
 
@@ -89,11 +93,12 @@ onMounted(async () => {
 			:value="loading ? loadingData : people"
 			:filters="filters"
 			v-model:filters="filters"
+			:lazy="true"
 			paginator
 			:rows="rows"
-			:total-records="totalPeople"
 			:first="(currentPage - 1) * rows"
-			:rows-per-page-options="[10, 20, 50]"
+			:totalRecords="totalPeople"
+			:rowsPerPageOptions="[10, 20, 50]"
 			@page="onPageChange"
 			class="mt-4 shadow-md rounded w-full bg-white"
 			tableStyle="min-width: 50rem"
@@ -129,7 +134,12 @@ onMounted(async () => {
 					</template>
 					<template v-else>
 						<div class="flex items-center cursor-pointer" @click="goToShowPerson(data.id)">
-							<img v-if="data" class="w-6 h-6 rounded-full mr-2" :src="getThumbnailUrl(data)" />
+							<img
+								v-if="data"
+								class="w-6 h-6 rounded-full mr-2"
+								loading="lazy"
+								:src="getThumbnailUrl(data)"
+							/>
 							<span class="font-medium">{{ data?.name }}</span>
 						</div>
 					</template>
