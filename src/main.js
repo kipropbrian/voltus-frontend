@@ -4,6 +4,8 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import posthogPlugin from '../plugins/posthog';
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
+import vue3GoogleLogin from 'vue3-google-login';
+import config from '@/config';
 
 import App from './App.vue';
 import router from './router';
@@ -18,6 +20,10 @@ pinia.use(piniaPluginPersistedstate);
 app.use(pinia);
 app.use(router);
 app.use(posthogPlugin);
+
+app.use(vue3GoogleLogin, {
+	clientId: config.googleClientID,
+});
 
 app.use(PrimeVue, {
 	theme: {

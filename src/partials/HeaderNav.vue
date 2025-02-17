@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
@@ -11,6 +12,25 @@ import {
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { CircleUser, Menu, Search } from 'lucide-vue-next';
+import { useAuthStore } from '@/stores/authStore';
+
+// Replace with your Google OAuth client ID
+const authStore = useAuthStore();
+const user = computed(() => authStore.user);
+
+const handleLogin = async (response) => {
+	try {
+		await authStore.loginWithGoogle(response.credential);
+		// Handle successful login
+	} catch (error) {
+		console.error('Login failed:', error);
+		// Handle error
+	}
+};
+
+const logout = () => {
+	authStore.logout();
+};
 </script>
 
 <template>
@@ -58,7 +78,8 @@ import { CircleUser, Menu, Search } from 'lucide-vue-next';
 					<Input type="search" placeholder="Search ..." class="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]" />
 				</div>
 			</form>
-			<DropdownMenu>
+			<!-- Dropdown for Logged-In Users -->
+			<DropdownMenu v-if="user">
 				<DropdownMenuTrigger as-child>
 					<Button variant="secondary" size="icon" class="rounded-full">
 						<CircleUser class="h-5 w-5" />
@@ -71,7 +92,22 @@ import { CircleUser, Menu, Search } from 'lucide-vue-next';
 					<DropdownMenuItem>Settings</DropdownMenuItem>
 					<DropdownMenuItem>Support</DropdownMenuItem>
 					<DropdownMenuSeparator />
-					<DropdownMenuItem>Logout</DropdownMenuItem>
+					<DropdownMenuItem @click="logout">Logout</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+
+			<!-- Dropdown for Logged-Out Users -->
+			<DropdownMenu v-else>
+				<DropdownMenuTrigger as-child>
+					<Button variant="secondary" size="icon" class="rounded-full">
+						<CircleUser class="h-5 w-5" />
+						<span class="sr-only">Toggle user menu</span>
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="end">
+					<DropdownMenuLabel>Guest</DropdownMenuLabel>
+					<DropdownMenuSeparator />
+					<GoogleLogin :callback="handleLogin" prompt />
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</div>
