@@ -18,12 +18,9 @@ export const useAuthStore = defineStore('auth', {
 	},
 
 	actions: {
-		async loginWithGoogle(credential) {
+		async loginWithGoogle(googleResponse) {
 			try {
-				const response = await axios.post(`${baseUrl}/api/auth/google`, {
-					credential,
-				});
-				console.log('response', response);
+				const response = await axios.post(`${baseUrl}/api/auth/google`, googleResponse);
 
 				this.setAuth(response.data);
 				return response.data;
@@ -66,7 +63,7 @@ export const useAuthStore = defineStore('auth', {
 			if (token) {
 				try {
 					axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-					const response = await axios.get('/api/user');
+					const response = await axios.get(`${baseUrl}/api/user`);
 					this.user = response.data;
 					this.isAuthenticated = true;
 				} catch (error) {

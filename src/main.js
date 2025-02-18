@@ -6,6 +6,7 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import vue3GoogleLogin from 'vue3-google-login';
 import config from '@/config';
+import { useAuthStore } from '@/stores/authStore';
 
 import App from './App.vue';
 import router from './router';
@@ -34,6 +35,14 @@ app.use(PrimeVue, {
 			cssLayer: false,
 		},
 	},
+});
+
+router.beforeEach(async (to, from, next) => {
+	const authStore = useAuthStore();
+	if (!authStore.isAuthenticated) {
+		await authStore.initAuth();
+	}
+	next();
 });
 
 app.mount('#app');

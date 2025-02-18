@@ -13,18 +13,19 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { CircleUser, Menu, Search } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/authStore';
+import { googleTokenLogin } from 'vue3-google-login';
 
 // Replace with your Google OAuth client ID
 const authStore = useAuthStore();
 const user = computed(() => authStore.user);
 
-const handleLogin = async (response) => {
+const handleLogin = async () => {
 	try {
-		await authStore.loginWithGoogle(response.credential);
+		const googleResponse = await googleTokenLogin();
+		await authStore.loginWithGoogle(googleResponse);
 		// Handle successful login
 	} catch (error) {
 		console.error('Login failed:', error);
-		// Handle error
 	}
 };
 
@@ -107,7 +108,7 @@ const logout = () => {
 				<DropdownMenuContent align="end">
 					<DropdownMenuLabel>Guest</DropdownMenuLabel>
 					<DropdownMenuSeparator />
-					<GoogleLogin :callback="handleLogin" prompt />
+					<Button variant="outline" @click="handleLogin">Login Using Google</Button>
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</div>
