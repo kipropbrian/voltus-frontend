@@ -45,11 +45,13 @@ const logout = () => {
 				</router-link>
 			</div>
 			<router-link to="/" exact-active-class="border-b-2 border-sky-500">Home</router-link>
-			<router-link to="/politicians" exact-active-class="border-b-2 border-sky-500">Politicians</router-link>
-			<router-link to="/faceset" exact-active-class="border-b-2 border-sky-500" class="whitespace-nowrap"
-				>Face sets</router-link
-			>
-			<a href="#" class="transition-colors hover:text-foreground"> Crime </a>
+			<template v-if="authStore.isAuthenticated">
+				<router-link to="/politicians" exact-active-class="border-b-2 border-sky-500">Politicians</router-link>
+				<router-link to="/faceset" exact-active-class="border-b-2 border-sky-500" class="whitespace-nowrap"
+					>Face sets</router-link
+				>
+				<a href="#" class="transition-colors hover:text-foreground"> Crime </a>
+			</template>
 		</nav>
 		<Sheet>
 			<SheetTrigger as-child>
