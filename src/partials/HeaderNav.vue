@@ -50,7 +50,7 @@ const logout = () => {
 				<router-link to="/faceset" exact-active-class="border-b-2 border-sky-500" class="whitespace-nowrap"
 					>Face sets</router-link
 				>
-				<a href="#" class="transition-colors hover:text-foreground"> Crime </a>
+				<router-link to="/crimes" exact-active-class="border-b-2 border-sky-500">Crime</router-link>
 			</template>
 		</nav>
 		<Sheet>
@@ -70,7 +70,7 @@ const logout = () => {
 					<router-link to="/" exact-active-class="border-b-2 border-sky-500">Home</router-link>
 					<a href="#" class="text-muted-foreground hover:text-foreground"> Politicians </a>
 					<a href="#" class="text-muted-foreground hover:text-foreground"> Faces </a>
-					<a href="#" class="text-muted-foreground hover:text-foreground"> Crime </a>
+					<a href="#" class="text-muted-foreground hover:text-foreground"> Crimes </a>
 				</nav>
 			</SheetContent>
 		</Sheet>

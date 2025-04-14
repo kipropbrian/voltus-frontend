@@ -8,6 +8,7 @@ import PoliticianNewView from '../views/Politician/NewView.vue';
 import FaceSetView from '../views/Facesets/FaceSetView.vue';
 import FaceSetShow from '../views/Facesets/FaceSetShow.vue';
 import FaceSetEdit from '../views/Facesets/FaceSetEdit.vue';
+import CrimeListView from '../views/Crime/CrimeListView.vue';
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,6 +58,12 @@ const router = createRouter({
 			path: '/faceset/edit/:outer_id',
 			name: 'faceset.edit',
 			component: FaceSetEdit,
+			meta: { requiresAuth: true },
+		},
+		{
+			path: '/crimes',
+			name: 'crimes.view',
+			component: CrimeListView,
 			meta: { requiresAuth: true },
 		},
 	],
