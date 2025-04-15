@@ -1,43 +1,18 @@
 <script setup>
-//Hit the backend using axios to get the list of crimes
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { onMounted } from 'vue';
+import { useCrimeStore } from '@/stores/crimeStore';
 
-const baseUrl = import.meta.env.VITE_API_URL;
-const IMAGE_PAGE_LIMIT = 10;
-
-const IMAGE_BASE_PATH = 'dci_images';
-
-const crimes = ref([]);
-
-const getCrimes = async () => {
-	const headers = {
-		'Content-Type': 'application/json',
-		Accept: 'application/json',
-	};
-	const params = {
-		page: 1,
-		limit: IMAGE_PAGE_LIMIT,
-	};
-
-	try {
-		const response = await axios.get(`${baseUrl}/api/image/getImages`, {
-			headers,
-			params,
-		});
-		crimes.value = response.data;
-		console.log('Crimes:', response.data);
-	} catch (error) {
-		console.error('Error fetching crimes:', error);
-	}
-};
+const crimeStore = useCrimeStore();
 
 onMounted(() => {
-	getCrimes();
+	crimeStore.fetchCrimes();
 });
 
 const getImagePath = (imageName) => {
-	return `${IMAGE_BASE_PATH}/${imageName}`;
+	return `dci_images/${imageName}`;
+};
+const getImageName = (imageName) => {
+	return imageName.split('.')[0];
 };
 </script>
 
@@ -46,12 +21,14 @@ const getImagePath = (imageName) => {
 		<div class="container mx-auto">
 			<h1 class="text-2xl font-bold mb-4">Crime List</h1>
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-				<div v-for="crime in crimes.data" :key="crime.id" class="bg-white shadow-md rounded-lg p-4">
-					<img
-						:src="getImagePath(crime.id)"
-						alt="Crime Image"
-						class="w-full h-48 object-cover rounded-t-lg"
-					/>
+				<div v-for="crime in crimeStore.crimes.data" :key="crime.id" class="bg-white shadow-md rounded-lg p-4">
+					<router-link :to="{ name: 'crimes.show', params: { id: getImageName(crime.id) } }">
+						<img
+							:src="getImagePath(crime.id)"
+							alt="Crime Image"
+							class="aspect-square w-full rounded-md bg-gray-200 object-contain group-hover:opacity-75 lg:aspect-auto lg:h-80"
+						/>
+					</router-link>
 					<h2 class="text-xl font-semibold mt-2">{{ crime.title }}</h2>
 					<p class="text-gray-700">{{ crime.description }}</p>
 				</div>

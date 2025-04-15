@@ -9,6 +9,7 @@ import FaceSetView from '../views/Facesets/FaceSetView.vue';
 import FaceSetShow from '../views/Facesets/FaceSetShow.vue';
 import FaceSetEdit from '../views/Facesets/FaceSetEdit.vue';
 import CrimeListView from '../views/Crime/CrimeListView.vue';
+import CrimeShowView from '@/views/Crime/CrimeShowView.vue';
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,6 +66,11 @@ const router = createRouter({
 			name: 'crimes.view',
 			component: CrimeListView,
 			meta: { requiresAuth: true },
+		},
+		{
+			path: '/crimes/:id',
+			name: 'crimes.show',
+			component: CrimeShowView,
 		},
 	],
 });
