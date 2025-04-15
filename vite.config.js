@@ -13,6 +13,9 @@ export default defineConfig({
 		},
 	},
 	plugins: [vue(), vueDevTools()],
+	server: {
+		allowedHosts: ['voltus.dev'], // Add your domain here
+	},
 	resolve: {
 		alias: {
 			'@': fileURLToPath(new URL('./src', import.meta.url)),
