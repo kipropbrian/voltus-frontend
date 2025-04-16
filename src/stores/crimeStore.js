@@ -58,11 +58,12 @@ export const useCrimeStore = defineStore('crimeStore', () => {
 
 	const fetchCrimeById = (id) => {
 		// Check if the crime is already in the store
-		const imageId = `${id}.jpg`;
-		const existingCrime = crimes.value.data.find((crime) => crime.id === imageId);
-		if (existingCrime) {
-			return existingCrime;
-		}
+		const imageId = `${id}`;
+		const existingCrime = crimes.value.data.find((crime) => {
+			let crimeid = crime.id.split('.')[0];
+			return crimeid === imageId;
+		});
+		return existingCrime;
 	};
 
 	// Load crimes from local storage when the store is initialized
