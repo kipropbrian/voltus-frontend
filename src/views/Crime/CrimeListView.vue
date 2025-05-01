@@ -11,6 +11,7 @@ onMounted(() => {
 const getImagePath = (imageName) => {
 	return `dci_images/${imageName}`;
 };
+
 const getImageName = (imageName) => {
 	return imageName.split('.')[0];
 };

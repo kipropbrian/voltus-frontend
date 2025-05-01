@@ -1,9 +1,9 @@
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useCrimeStore } from '@/stores/crimeStore';
 import { watch, ref, onMounted } from 'vue';
 
-const DEFAULT_DETECTOR = 'retinaface';
+const DEFAULT_DETECTOR = 'mtcnn';
 
 const imageDetails = ref({
 	detector: DEFAULT_DETECTOR,
@@ -11,6 +11,7 @@ const imageDetails = ref({
 });
 
 const route = useRoute();
+const router = useRouter();
 const { fetchCrimeById } = useCrimeStore();
 
 const IMAGE_BASE_PATH = '/dci_images';
@@ -79,7 +80,7 @@ const drawFaces = () => {
 
 		ctx.fillStyle = 'white'; // Text color
 		ctx.font = '16px Arial';
-		ctx.fillText(`Confidence: ${confidence}`, facial_area.x, facial_area.y - 5);
+		ctx.fillText(`${confidence}`, facial_area.x, facial_area.y - 5);
 
 		// Reset shadow settings to avoid affecting other drawings
 		ctx.shadowColor = 'transparent';
@@ -110,12 +111,27 @@ watch(
 	},
 	{ deep: true },
 );
+
+const goBack = () => {
+	router.back();
+};
 </script>
 
 <template>
 	<main class="container mx-auto px-4 py-8 md:px-6">
 		<div class="container mx-auto">
+			<button @click="goBack" class="mr-4 flex items-center text-gray-600 hover:text-gray-900 focus:outline-none">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+					<path
+						fill-rule="evenodd"
+						d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z"
+						clip-rule="evenodd"
+					/>
+				</svg>
+				<span class="ml-2">Back</span>
+			</button>
 			<h1 class="text-2xl font-bold mb-4">Image Details</h1>
+
 			<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 				<!-- Image Section (2/3 of the grid) -->
 				<div class="md:col-span-2 flex justify-center relative">
@@ -151,7 +167,7 @@ watch(
 							</option>
 						</select>
 					</div>
-					
+
 					<strong>Detector:</strong> {{ imageDetails.detector }}<br />
 				</div>
 			</div>

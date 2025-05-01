@@ -44,24 +44,6 @@ const router = createRouter({
 			meta: { requiresAuth: true },
 		},
 		{
-			path: '/faceset',
-			name: 'faceset.view',
-			component: FaceSetView,
-			meta: { requiresAuth: true },
-		},
-		{
-			path: '/faceset/show/:outer_id',
-			name: 'faceset.show',
-			component: FaceSetShow,
-			meta: { requiresAuth: true },
-		},
-		{
-			path: '/faceset/edit/:outer_id',
-			name: 'faceset.edit',
-			component: FaceSetEdit,
-			meta: { requiresAuth: true },
-		},
-		{
 			path: '/crimes',
 			name: 'crimes.view',
 			component: CrimeListView,

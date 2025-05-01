@@ -59,6 +59,7 @@ export const useAuthStore = defineStore('auth', {
 		},
 
 		async initAuth() {
+			localStorage.removeItem('crimes');
 			const token = localStorage.getItem('token');
 			if (token) {
 				try {

@@ -47,9 +47,6 @@ const logout = () => {
 			<router-link to="/" exact-active-class="border-b-2 border-sky-500">Home</router-link>
 			<template v-if="authStore.isAuthenticated">
 				<router-link to="/politicians" exact-active-class="border-b-2 border-sky-500">Politicians</router-link>
-				<router-link to="/faceset" exact-active-class="border-b-2 border-sky-500" class="whitespace-nowrap"
-					>Face sets</router-link
-				>
 				<router-link to="/crimes" exact-active-class="border-b-2 border-sky-500">Crime</router-link>
 			</template>
 		</nav>
@@ -69,7 +66,6 @@ const logout = () => {
 					</div>
 					<router-link to="/" exact-active-class="border-b-2 border-sky-500">Home</router-link>
 					<a href="#" class="text-muted-foreground hover:text-foreground"> Politicians </a>
-					<a href="#" class="text-muted-foreground hover:text-foreground"> Faces </a>
 					<a href="#" class="text-muted-foreground hover:text-foreground"> Crimes </a>
 				</nav>
 			</SheetContent>

@@ -8,7 +8,7 @@ export const useCrimeStore = defineStore('crimeStore', () => {
 		pagination: {}, // Stores pagination details
 	});
 	const baseUrl = import.meta.env.VITE_API_URL;
-	const IMAGE_PAGE_LIMIT = 12;
+	const IMAGE_PAGE_LIMIT = 62;
 
 	// Load crimes from local storage on initialization
 	const loadCrimesFromLocalStorage = () => {
