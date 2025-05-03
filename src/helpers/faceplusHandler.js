@@ -19,7 +19,7 @@ export async function detectFace(imageFile, baseUrl) {
 		withCredentials: true,
 	};
 
-	const response = await axios.post(`${baseUrl}/api/face/fullsearch`, form, config);
+	const response = await axios.post(`${baseUrl}/api/image/search`, form, config);
 	return response.data;
 }
 

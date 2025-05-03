@@ -4,10 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Upload, Shield, Search, LineChart, AlertCircle } from 'lucide-vue-next';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useFacePlusStore } from '@/stores/facePlusStore';
 
 const selectedFile = ref<File | null>(null);
 const previewUrl = ref<string | null>(null);
 const error = ref<string | null>(null);
+
+const facePlusStore = useFacePlusStore();
 
 const handleFileSelect = (event: Event) => {
 	const input = event.target as HTMLInputElement;
@@ -34,7 +37,9 @@ const handleUpload = async () => {
 	if (!selectedFile.value) return;
 
 	try {
-		console.log('Uploading file:', selectedFile.value);
+		facePlusStore.uploadedInfo.uploadedImage = selectedFile.value;
+		await facePlusStore.submitImage();
+		
 		selectedFile.value = null;
 		previewUrl.value = null;
 	} catch (err) {
