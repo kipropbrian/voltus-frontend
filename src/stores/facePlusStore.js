@@ -5,6 +5,7 @@ import { checkSize, updateImage, drawFaceRectangle, dropHandler } from '../helpe
 import axios from 'axios';
 
 const baseUrl = import.meta.env.VITE_API_URL;
+const imagePath = import.meta.env.VITE_IMAGE_PATH;
 
 export const useFacePlusStore = defineStore('facePlusStore', {
 	state() {
@@ -21,6 +22,12 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 			},
 			status: { loading: false },
 			processedFaces: [], // This will hold the processed face data for the view
+			searchResults: {
+				matches: [],
+				totalResults: 0,
+				highestScore: 0,
+				lowestScore: 1,
+			},
 		};
 	},
 
@@ -163,7 +170,7 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 		 * @param {number} [interval=2000] - The interval in milliseconds between polling attempts
 		 * @returns {Promise<Object|null>} - Resolves with the search results data if completed
 		 */
-		async pollForImageProcessing(correlationId, retryCount = 0, maxRetries = 5, interval = 3000) {
+		async pollForImageProcessing(correlationId, retryCount = 0, maxRetries = 10, interval = 3000) {
 			const alertStore = useAlertStore();
 			this.status.loading = true;
 
@@ -209,6 +216,35 @@ export const useFacePlusStore = defineStore('facePlusStore', {
 				this.status.loading = false;
 				return null;
 			}
+		},
+
+		/**
+		 * Process the search results from the backend and store them in state
+		 * @param {Array} results - Array of search results containing tweet_id, image_name, and score
+		 */
+		processResults(results) {
+			if (!Array.isArray(results)) {
+				console.error('Invalid results format');
+				return;
+			}
+
+			// Sort results by score in descending order
+			const sortedResults = [...results].sort((a, b) => b.score - a.score);
+
+			// Update state with processed results
+			this.searchResults = {
+				matches: sortedResults.map((result) => ({
+					tweetId: result.tweet_id,
+					imageName: result.image_name,
+					imagePath: `${imagePath}/${result.image_name}`,
+					score: result.score,
+					// Format score as percentage for display
+					matchPercentage: Math.round(result.score * 100),
+				})),
+				totalResults: results.length,
+				highestScore: Math.max(...results.map((r) => r.score)),
+				lowestScore: Math.min(...results.map((r) => r.score)),
+			};
 		},
 
 		reset() {

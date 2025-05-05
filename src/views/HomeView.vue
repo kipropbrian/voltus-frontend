@@ -5,12 +5,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Upload, Shield, Search, LineChart, AlertCircle } from 'lucide-vue-next';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useFacePlusStore } from '@/stores/facePlusStore';
+import { storeToRefs } from 'pinia';
 
 const selectedFile = ref<File | null>(null);
 const previewUrl = ref<string | null>(null);
 const error = ref<string | null>(null);
 
 const facePlusStore = useFacePlusStore();
+
+const { searchResults } = storeToRefs(facePlusStore);
 
 const handleFileSelect = (event: Event) => {
 	const input = event.target as HTMLInputElement;
@@ -39,7 +42,7 @@ const handleUpload = async () => {
 	try {
 		facePlusStore.uploadedInfo.uploadedImage = selectedFile.value;
 		await facePlusStore.submitImage();
-		
+
 		selectedFile.value = null;
 		previewUrl.value = null;
 	} catch (err) {
@@ -114,6 +117,45 @@ const handleUpload = async () => {
 					</p>
 				</CardContent>
 			</Card>
+		</section>
+
+		<section v-if="searchResults.matches.length" class="mx-auto mb-14 max-w-2xl">
+			<div class="mb-6 flex items-center justify-between">
+				<h2 class="text-2xl font-semibold">Search Results</h2>
+				<p class="rounded-full bg-primary/10 px-4 py-2 text-sm font-medium">
+					Total matches: {{ searchResults.totalResults }}
+				</p>
+			</div>
+
+			<div class="grid gap-6">
+				<Card v-for="match in searchResults.matches" :key="match.tweetId" class="overflow-hidden">
+					<CardContent class="p-6">
+						<div class="flex flex-col gap-6 sm:flex-row">
+							<div class="relative sm:w-2/4">
+								<img
+									:src="match.imagePath"
+									:alt="match.imageName"
+									class="aspect-square rounded-lg object-cover shadow-md"
+								/>
+								<div
+									class="absolute right-2 top-2 rounded-full bg-background/95 px-3 py-1 text-sm font-medium shadow-sm"
+								>
+									{{ match.matchPercentage }}% Match
+								</div>
+							</div>
+							<div class="sm:w-2/4">
+								<div class="space-y-4">
+									<div>
+										<p class="text-sm font-medium text-muted-foreground">Tweet ID</p>
+										<p class="font-mono">{{ match.tweetId }}</p>
+									</div>
+									<!-- Add more match details here if available -->
+								</div>
+							</div>
+						</div>
+					</CardContent>
+				</Card>
+			</div>
 		</section>
 
 		<section class="mx-auto max-w-4xl py-8 border-t bg-background">
